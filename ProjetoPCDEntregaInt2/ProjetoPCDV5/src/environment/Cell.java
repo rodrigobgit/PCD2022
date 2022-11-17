@@ -14,7 +14,6 @@ public class Cell {
 		super();
 		this.position = position;
 		this.game=g;
-		
 	}
 
 	public Coordinate getPosition() {
@@ -62,7 +61,7 @@ public class Cell {
 			setPlayer(player);
 		}
 	}
-	//limpa célula
+	//limpa cï¿½lula
 	public synchronized void clear() {
 		setPlayer(null);
 		notifyAll();
