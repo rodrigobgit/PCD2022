@@ -1,5 +1,8 @@
 package game;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import environment.Cell;
 import environment.Coordinate;
 import environment.Direction;
@@ -17,6 +20,7 @@ public abstract class Player extends Thread  {
 	private byte originalStrength;
 	private byte currentStrength;
 	private byte debuffMultiplier;
+	private Lock lock = new ReentrantLock();
 	private int move;
 
 	public Player(Game game, int id, byte originalStrength) {
@@ -25,7 +29,7 @@ public abstract class Player extends Thread  {
 		this.originalStrength=originalStrength;
 		this.currentStrength = originalStrength;
 		this.debuffMultiplier = originalStrength;
-		this.currentCell = null;
+//		this.currentCell = null;
 	}
 
 	public abstract boolean isHumanPlayer();
@@ -36,13 +40,13 @@ public abstract class Player extends Thread  {
 		+ "]";
 	}
 
-	@Override // Veio do código base. Para que serve?
+/*	@Override // Veio do código base. Para que serve?
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + id;
 		return result;
-	} 
+	}*/ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -71,10 +75,27 @@ public abstract class Player extends Thread  {
 	public int getIdentification() {
 		return id;
 	}
-	//mudar este metodo para deixar de funcionar com atributo
+	
+	/* Método anterior (em que currentCell era atributo de Player)
 	public Cell getCurrentCell() {
 		return currentCell;
+	}*/
+	
+	public Cell getCurrentCell() {
+		Coordinate coord;
+		for(int x = 0; x < Game.DIMX; x++) {
+			for(int y = 0; y < Game.DIMY; y++) {
+				coord = new Coordinate(x, y);
+				Cell cell = game.getCell(coord);
+				if(cell.getPlayer() == this) {
+					return cell;
+				}
+			}
+		}
+		System.out.println("O jogador " + this.getIdentification() + " vai ter célula null!!!");
+		return null;
 	}
+
 	public void setCurrentCell(Cell cell) {
 		this.currentCell = cell;
 	}
@@ -82,36 +103,42 @@ public abstract class Player extends Thread  {
 	public int getDebuffMultiplier() {
 		return debuffMultiplier;
 	}
-	public void movePlayer(Direction dir,Cell cell) {
-		// Calcula coordenada da proxima cell		
+
+	public void movePlayer(Direction dir, Cell cell) {
+		// Calcula coordenada da proxima cell
 		Coordinate atualCoord = cell.getPosition();
 		Coordinate nextCoord = atualCoord.translate(dir.getVector());
-		// Verifica se está dentro do board		
-		if(nextCoord.getX()>=0 && nextCoord.getY()>=0 && nextCoord.getX()<Game.DIMX && nextCoord.getY()<Game.DIMY) {
-			Cell nextCell=game.getCell(nextCoord);
+		// Verifica se está dentro do board
+		if (nextCoord.getX() >= 0 && nextCoord.getY() >= 0 && nextCoord.getX() < Game.DIMX
+				&& nextCoord.getY() < Game.DIMY) {
 			
-			//todo o codigo ate ao else rollDice deverá estar no metodo movementPut da classe Cell
-			//nextCell.movementPut(this);			
-			
-			if (nextCell.isOcupied()) { // 
-				if(nextCell.getPlayer().getCurrentStrength()> 0 && nextCell.getPlayer().getCurrentStrength()<10) { 
-					duel(this,nextCell.getPlayer());
+			Cell nextCell = game.getCell(nextCoord);
+
+			// todo o codigo ate ao else rollDice deverá estar no metodo movementPut da
+			// classe Cell
+			// nextCell.movementPut(this);
+
+			if (nextCell.isOcupied()) { //
+				if (nextCell.getPlayer().getCurrentStrength() > 0 && nextCell.getPlayer().getCurrentStrength() < 10) {
+					duel(this, nextCell.getPlayer());
 					game.notifyChange();
 				}
-				//fazer a imobilizacao de 2 seg aqui
-				
-			} else { 
-				cell.clear(); 
-				nextCell.movementPut(this); 
-				setCurrentCell(nextCell); 
-				game.notifyChange();
-				if(isHumanPlayer())setMove(0);
+				// fazer a imobilizacao de 2 seg aqui
+
+			} else {
+				lock.lock();	// este lock é para assegurar que as duas operações seguintes são para a mesma Thread
+				cell.clear();
+				nextCell.movementPut(this);
+				if (isHumanPlayer()) setMove(0);
+				lock.unlock();
 			}
-		} else {
-			if(!isHumanPlayer())rollDice();
-			 
-			
-		}
+
+		// rollDice não pode ser invocado porque é o método que invoca este (causa um loop) - era um dos erros	
+		} /* else {
+			if (!isHumanPlayer())
+				rollDice();
+
+		} */
 	}
 	
 	public void duel(Player movingPlayer, Player occupantPlayer) {
@@ -125,7 +152,7 @@ public abstract class Player extends Thread  {
 				int random = (int) Math.random();
 				if (random == 1) {
 					winner = 1; // movingPlayer winns
-				} else {
+				} else { // random = 0
 					winner = 2; // movingPlayer looses
 				}
 			}

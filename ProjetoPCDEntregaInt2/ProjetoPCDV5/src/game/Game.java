@@ -10,13 +10,13 @@ import environment.Coordinate;
 public class Game extends Observable { // Game é o objecto Observado
 	public static final int DIMY = 30;
 	public static final int DIMX = 30;
-	private static final int NUM_BOT_PLAYERS = 40;
+	private static final int NUM_BOT_PLAYERS = 90;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME=3;
 	private int numWinners;
 	public static final long REFRESH_INTERVAL = 100;
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
-	public static final long INITIAL_WAITING_TIME = 10000;
+	public static final long INITIAL_WAITING_TIME = 2000;
 	
 	protected Cell[][] board;
 	private ArrayList<Player> arrayPlayerThreads; // ArrayList para as Threads de Jogador
@@ -54,7 +54,6 @@ public class Game extends Observable { // Game é o objecto Observado
 		}
 	}
 	
-	
 	public void addPlayerToGame(Player player) {
 		Cell initialPos = getRandomCell();
 		initialPos.initialPut(player);
@@ -90,6 +89,8 @@ public class Game extends Observable { // Game é o objecto Observado
 		for (Player pl : arrayPlayerThreads) {
 			pl.interrupt();
 		}
+		
+		
 		// Espera que terminem todas as Threads
 //		for (Player pl : arrayPlayerThreads) {
 //			try {

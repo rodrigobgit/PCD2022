@@ -21,7 +21,7 @@ public class BotPlayer extends Player {
 			Thread.sleep(game.INITIAL_WAITING_TIME);
 		} catch (InterruptedException e1) {}
 
-		while (!Thread.interrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10) {
+		while (!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10) {
 			try {
 				sleep(interval * getDebuffMultiplier());
 				rollDice();
@@ -41,6 +41,8 @@ public class BotPlayer extends Player {
 		if (random<0.50 && random>=0.25) direction=environment.Direction.DOWN;
 		if (random<0.75 && random>=0.5)	direction=environment.Direction.LEFT;
 		if (random>=0.75) direction=environment.Direction.RIGHT;
+		
+//		System.out.println(getCurrentCell());
 		
 		movePlayer(direction, getCurrentCell());
 	}

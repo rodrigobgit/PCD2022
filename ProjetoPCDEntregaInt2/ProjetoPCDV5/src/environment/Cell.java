@@ -12,8 +12,8 @@ public class Cell {
 	//teste123
 	public Cell(Game g, Coordinate position) {
 		super();
-		this.position = position;
 		this.game=g;
+		this.position = position;
 	}
 
 	public Coordinate getPosition() {
@@ -53,17 +53,27 @@ public class Cell {
 	
 	
 	//move jogador para esta celula
-	public synchronized void movementPut(Player player) {
+/*	public synchronized void movementPut(Player player) {
 		if (isOcupied()) {
 			Player occupantPlayer;
 			occupantPlayer = getPlayer();
 		} else {
 			setPlayer(player);
 		}
+	} */
+
+	// Processa movimento do jogador
+	public synchronized void movementPut(Player player) {
+		if (!isOcupied()) {
+			setPlayer(player);
+			game.notifyChange();
+		}
 	}
-	//limpa c�lula
+	
+	// Limpa celula
 	public synchronized void clear() {
 		setPlayer(null);
+		game.notifyChange();
 		notifyAll();
 	}
 	

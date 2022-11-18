@@ -22,7 +22,7 @@ public class HumanPlayer extends Player {
 		try {
 			Thread.sleep(game.INITIAL_WAITING_TIME);
 		} catch (InterruptedException e1) {}
-		while(!Thread.interrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10)
+		while(!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10)
 			try {
 				sleep(interval*getDebuffMultiplier());
 				
