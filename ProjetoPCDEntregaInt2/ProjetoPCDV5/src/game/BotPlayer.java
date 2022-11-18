@@ -18,7 +18,7 @@ public class BotPlayer extends Player {
 	public void run() {
 		game.addPlayerToGame(this);
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(game.INITIAL_WAITING_TIME);
 		} catch (InterruptedException e1) {}
 
 		while (!Thread.interrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10) {
