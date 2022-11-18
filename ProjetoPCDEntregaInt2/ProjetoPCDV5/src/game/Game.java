@@ -52,8 +52,6 @@ public class Game extends Observable { // Game é o objecto Observado
 			arrayPlayerThreads.add(botPlayer);
 			botPlayer.start();
 		}
-	
-		
 	}
 	
 	
