@@ -9,7 +9,7 @@ public class Cell {
 	private Coordinate position;
 	private Game game;
 	private Player player;
-	
+	//teste123
 	public Cell(Game g, Coordinate position) {
 		super();
 		this.position = position;
