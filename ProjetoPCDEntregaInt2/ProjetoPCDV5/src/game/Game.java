@@ -19,7 +19,6 @@ public class Game extends Observable { // Game é o objecto Observado
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
 	public static final long INITIAL_WAITING_TIME = 10000;
 	
-
 	protected Cell[][] board;
 	private ArrayList<Player> arrayPlayerThreads; // ArrayList para as Threads de Jogador
 
