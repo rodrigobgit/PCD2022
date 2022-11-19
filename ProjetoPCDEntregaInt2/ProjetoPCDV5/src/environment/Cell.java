@@ -1,7 +1,5 @@
 package environment;
 
-import javax.swing.event.DocumentListener;
-
 import game.Game;
 import game.Player;
 
@@ -9,7 +7,6 @@ public class Cell {
 	private Coordinate position;
 	private Game game;
 	private Player player;
-	//teste123
 	public Cell(Game g, Coordinate position) {
 		super();
 		this.game=g;
@@ -20,10 +17,6 @@ public class Cell {
 		return position;
 	}
 
-	public boolean isOcupied() {
-		return player != null;
-	}
-
 	public Player getPlayer() {
 		return player;
 	}
@@ -31,9 +24,16 @@ public class Cell {
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
+	
+	public Cell getCell(Coordinate at) {
+		return game.board[at.x][at.y];
+	}
 
-	//coloca jogador
-	public synchronized void initialPut(Player player) {
+	public boolean isOcupied() {
+		return player != null;
+	}
+
+	public synchronized void initialPut(Player player) { // Usar varáveis condicionais (pelo menos, aqui)
 		while(isOcupied()) {
 			Player occupantPlayer;
 			occupantPlayer = getPlayer();
@@ -41,41 +41,23 @@ public class Cell {
 			+ getPosition().toString() + " por causa do jogador " + occupantPlayer.getIdentification());
 			try {
 				wait();
-				
 			} catch(InterruptedException e) {
-				
 			}
-		}	
-		
+		}
+		setPlayer(player);	
+		game.notifyChange();
+		notifyAll();
+	}
+
+	// Processa movimento do jogador, colocando-o na nova célula
+	public synchronized void movementPut(Player player) {
 		setPlayer(player);
 	}
-	//o que fazer aqui? o metodo clear tem de passar a estar no metodo movementPut. O movementPut vai fazer clear da cell atual e set na proxima cell.
 	
-	
-	//move jogador para esta celula
-/*	public synchronized void movementPut(Player player) {
-		if (isOcupied()) {
-			Player occupantPlayer;
-			occupantPlayer = getPlayer();
-		} else {
-			setPlayer(player);
-		}
-	} */
-
-	// Processa movimento do jogador
-	public synchronized void movementPut(Player player) {
-		if (!isOcupied()) {
-			setPlayer(player);
-			game.notifyChange();
-		}
-	}
-	
-	// Limpa celula
+	// Limpa celula onde estava o jogador
 	public synchronized void clear() {
 		setPlayer(null);
 		game.notifyChange();
 		notifyAll();
 	}
-	
-
 }

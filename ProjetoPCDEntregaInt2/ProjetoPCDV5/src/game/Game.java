@@ -1,26 +1,30 @@
 package game;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.Observable;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import environment.Cell;
 import environment.Coordinate;
+import environment.Direction;
 
 public class Game extends Observable { // Game é o objecto Observado
 	public static final int DIMY = 30;
 	public static final int DIMX = 30;
 	private static final int NUM_BOT_PLAYERS = 90;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME=3;
-	private int numWinners;
 	public static final long REFRESH_INTERVAL = 100;
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
 	public static final long INITIAL_WAITING_TIME = 2000;
-	
-	protected Cell[][] board;
-	private ArrayList<Player> arrayPlayerThreads; // ArrayList para as Threads de Jogador
 
+	private int numWinners;
+	public Cell[][] board;
+	private ArrayList<Player> arrayPlayerThreads; // ArrayList para as Threads de Jogador
+	private Lock lock = new ReentrantLock();
+
+	
+	
 	public Game() {
 		board = new Cell[Game.DIMX][Game.DIMY]; // Atributo board mantém, exclusivamente, a localização dos jogadores
 		for (int x = 0; x < Game.DIMX; x++) 
@@ -28,7 +32,7 @@ public class Game extends Observable { // Game é o objecto Observado
 				board[x][y] = new Cell(this, new Coordinate(x, y));
 		this.numWinners = 0;
 	}
-	
+		
 	public void go() {
 		arrayPlayerThreads = new ArrayList<>();
 	
@@ -55,12 +59,71 @@ public class Game extends Observable { // Game é o objecto Observado
 	}
 	
 	public void addPlayerToGame(Player player) {
-		Cell initialPos = getRandomCell();
+		// Random determination of a cell
+		Cell initialPos = getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
+		// Cell assignmnet to player
 		initialPos.initialPut(player);
-		player.setCurrentCell(initialPos);
-		notifyChange();
 	}
 
+	public void movePlayer(Player player, Cell actualCell, Direction dir) {
+		// Calcula coordenada da proxima cell
+		Coordinate atualCoord = actualCell.getPosition();
+		Coordinate nextCoord = atualCoord.translate(dir.getVector());
+		
+		// Verifica se proxima cell está dentro do board
+		if (nextCoord.getX() >= 0 && nextCoord.getY() >= 0 && nextCoord.getX() < Game.DIMX
+				&& nextCoord.getY() < Game.DIMY) {
+			Cell nextCell = getCell(nextCoord);
+			lock.lock();
+			if (nextCell.isOcupied()) { //
+				if (nextCell.getPlayer().getCurrentStrength() > 0 && nextCell.getPlayer().getCurrentStrength() < 10) {
+					duel(player, nextCell.getPlayer());
+					notifyChange();
+				}
+				// fazer a imobilizacao de 2 seg aqui
+
+			} else {
+				actualCell.clear();
+				nextCell.movementPut(player);
+				if (player.isHumanPlayer())
+					player.setMove(0);
+				
+			}
+			lock.unlock();
+		}
+	}
+
+	public void duel(Player movingPlayer, Player occupantPlayer) {
+		int winner;
+		if (movingPlayer.getCurrentStrength() > occupantPlayer.getCurrentStrength()) { // movingPlayer winns
+			winner = 1;
+		} else {
+			if (movingPlayer.getCurrentStrength() < occupantPlayer.getCurrentStrength()) { // movingPlayer looses
+				winner = 2;
+			} else { // Same Strength
+				int random = (int) Math.random();
+				if (random == 1) {
+					winner = 1; // movingPlayer winns
+				} else { // random = 0
+					winner = 2; // movingPlayer looses
+				}
+			}
+		}
+
+		byte newStrength = (byte) (movingPlayer.getCurrentStrength() + occupantPlayer.getCurrentStrength());
+
+		switch (winner) {
+		case 1:
+			movingPlayer.setCurrentStrength(newStrength);
+			occupantPlayer.setCurrentStrength((byte) 0);
+			break;
+		case 2:
+			occupantPlayer.setCurrentStrength(newStrength);
+			movingPlayer.setCurrentStrength((byte) 0);
+			break;
+		}
+	}
+	
 	public Cell getRandomCell() {
 		Cell newCell=getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
 		return newCell; 
@@ -90,7 +153,6 @@ public class Game extends Observable { // Game é o objecto Observado
 			pl.interrupt();
 		}
 		
-		
 		// Espera que terminem todas as Threads
 //		for (Player pl : arrayPlayerThreads) {
 //			try {
@@ -101,5 +163,4 @@ public class Game extends Observable { // Game é o objecto Observado
 //		}
 		System.out.println("Game Over!");
 	}
-	
 }

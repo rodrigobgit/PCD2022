@@ -1,14 +1,7 @@
 package game;
 
-import environment.Cell;
-import environment.Coordinate;
 import environment.Direction;
 
-/**
- * Class to demonstrate a player being added to the game.
- * @author luismota
- *
- */
 public class HumanPlayer extends Player {
 	private Direction nextDirection;
 	private int move;
@@ -20,24 +13,24 @@ public class HumanPlayer extends Player {
 	public void run() {
 		game.addPlayerToGame(this);
 		try {
-			Thread.sleep(game.INITIAL_WAITING_TIME);
-		} catch (InterruptedException e1) {}
-		while(!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10)
+			Thread.sleep(Game.INITIAL_WAITING_TIME);
+		} catch (InterruptedException e1) {
+		}
+		while (!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10)
 			try {
-				sleep(interval*getDebuffMultiplier());
-				
-				if(move==1) {
-					
-					movePlayer(nextDirection, getCurrentCell());
-				}
-				else {
-					
+				sleep(interval * getDebuffMultiplier());
+
+				if (move == 1) {
+
+					game.movePlayer(this, getCurrentCell(), nextDirection);
+				} else {
+
 				}
 			} catch (InterruptedException e) {
-				
+
 				e.printStackTrace();
 			}
-			
+
 	}
 	
 	public void setNextDirection(Direction direction) {
@@ -50,7 +43,6 @@ public class HumanPlayer extends Player {
 	public int getMove() {
 		return move;
 	}
-	
 	
 	public boolean isHumanPlayer() {
 		return true;

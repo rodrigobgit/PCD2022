@@ -37,9 +37,7 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 
 	public void init() {
 		frame.setVisible(true);
-
 		game.go();
-		
 		
 		//humano de teste
 		HumanPlayer humanPlayer = new HumanPlayer(game, 50, (byte) 3);		
@@ -54,8 +52,8 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 				humanPlayer.setNextDirection(boardGui.getLastPressedDirection());
 				boardGui.clearLastPressedDirection();
 			}
-		} 
-	}
+		}
+	} 
 
 	@Override
 	public void update(Observable o, Object arg) {
