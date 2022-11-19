@@ -74,6 +74,7 @@ public class Game extends Observable { // Game é o objecto Observado
 		if (nextCoord.getX() >= 0 && nextCoord.getY() >= 0 && nextCoord.getX() < Game.DIMX
 				&& nextCoord.getY() < Game.DIMY) {
 			Cell nextCell = getCell(nextCoord);
+			
 			lock.lock();
 			try {
 				if (nextCell.isOcupied()) { //
