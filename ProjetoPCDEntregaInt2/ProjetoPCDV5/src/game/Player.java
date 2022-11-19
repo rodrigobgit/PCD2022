@@ -2,6 +2,7 @@ package game;
 
 import environment.Cell;
 import environment.Coordinate;
+import environment.Direction;
 
 /**
  * Represents a player.
@@ -93,6 +94,55 @@ public abstract class Player extends Thread  {
 
 	public int getMove() {
 		return move;
+	}
+
+	public void movePlayer(Player player, Direction dir) {
+		// Calcula celula actual do Player
+		Cell currentCell = getCurrentCell();
+		
+		// Calcula coordenada da proxima cell
+		Coordinate currentCoord = currentCell.getPosition();
+		Coordinate nextCoord = currentCoord.translate(dir.getVector());
+		// Verifica se proxima cell está dentro do board
+		
+		
+		
+		if (nextCoord.getX() >= 0 && nextCoord.getY() >= 0 && nextCoord.getX() < Game.DIMX
+				&& nextCoord.getY() < Game.DIMY) {
+			Cell nextCell = game.getCell(nextCoord);
+			nextCell.movementPut(player, currentCell);
+		}
+	}
+	
+	public void duel(Player occupantPlayer) { // Metodo é instanciado pelo movingPlayer (this)
+		int winner;
+		if (this.getCurrentStrength() > occupantPlayer.getCurrentStrength()) { // movingPlayer winns
+			winner = 1;
+		} else {
+			if (this.getCurrentStrength() < occupantPlayer.getCurrentStrength()) { // movingPlayer looses
+				winner = 2;
+			} else { // Same Strength
+				int random = (int) Math.random();
+				if (random == 1) {
+					winner = 1; // movingPlayer winns
+				} else { // random = 0
+					winner = 2; // movingPlayer looses
+				}
+			}
+		}
+
+		byte newStrength = (byte) (this.getCurrentStrength() + occupantPlayer.getCurrentStrength());
+
+		switch (winner) {
+		case 1:
+			this.setCurrentStrength(newStrength);
+			occupantPlayer.setCurrentStrength((byte) 0);
+			break;
+		case 2:
+			occupantPlayer.setCurrentStrength(newStrength);
+			this.setCurrentStrength((byte) 0);
+			break;
+		}
 	}
 
 }

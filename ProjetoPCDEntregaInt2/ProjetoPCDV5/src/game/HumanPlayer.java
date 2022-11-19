@@ -21,8 +21,7 @@ public class HumanPlayer extends Player {
 				sleep(interval * getDebuffMultiplier());
 
 				if (move == 1) {
-
-					game.movePlayer(this, getCurrentCell(), nextDirection);
+					movePlayer(this, nextDirection);
 				} else {
 
 				}

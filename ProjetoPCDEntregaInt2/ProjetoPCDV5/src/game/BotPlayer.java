@@ -30,14 +30,14 @@ public class BotPlayer extends Player {
 	public void rollDice() {
 		// Escolha da direcao para movimento
 		double random=Math.random();
-		Direction direction = null;
+		Direction nextDirection = null;
 		
-		if (random<0.25) direction=environment.Direction.UP;
-		if (random<0.50 && random>=0.25) direction=environment.Direction.DOWN;
-		if (random<0.75 && random>=0.5)	direction=environment.Direction.LEFT;
-		if (random>=0.75) direction=environment.Direction.RIGHT;
+		if (random<0.25) nextDirection=environment.Direction.UP;
+		if (random<0.50 && random>=0.25) nextDirection=environment.Direction.DOWN;
+		if (random<0.75 && random>=0.5)	nextDirection=environment.Direction.LEFT;
+		if (random>=0.75) nextDirection=environment.Direction.RIGHT;
 
-		game.movePlayer(this,getCurrentCell(), direction);
+		movePlayer(this, nextDirection);
 	}
 	
 	public boolean isHumanPlayer() {
