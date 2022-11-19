@@ -31,7 +31,7 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 		boardGui = new BoardJComponent(game);
 		frame.add(boardGui);
 		frame.setSize(800,800);
-		frame.setLocation(0, 150);
+		frame.setLocation(0, 0);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 

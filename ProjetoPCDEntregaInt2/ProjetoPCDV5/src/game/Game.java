@@ -69,27 +69,31 @@ public class Game extends Observable { // Game é o objecto Observado
 		// Calcula coordenada da proxima cell
 		Coordinate atualCoord = actualCell.getPosition();
 		Coordinate nextCoord = atualCoord.translate(dir.getVector());
-		
+
 		// Verifica se proxima cell está dentro do board
 		if (nextCoord.getX() >= 0 && nextCoord.getY() >= 0 && nextCoord.getX() < Game.DIMX
 				&& nextCoord.getY() < Game.DIMY) {
 			Cell nextCell = getCell(nextCoord);
 			lock.lock();
-			if (nextCell.isOcupied()) { //
-				if (nextCell.getPlayer().getCurrentStrength() > 0 && nextCell.getPlayer().getCurrentStrength() < 10) {
-					duel(player, nextCell.getPlayer());
-					notifyChange();
-				}
-				// fazer a imobilizacao de 2 seg aqui
+			try {
+				if (nextCell.isOcupied()) { //
+					if (nextCell.getPlayer().getCurrentStrength() > 0
+							&& nextCell.getPlayer().getCurrentStrength() < 10) {
+						duel(player, nextCell.getPlayer());
+						notifyChange();
+					}
+					// fazer a imobilizacao de 2 seg aqui
 
-			} else {
-				actualCell.clear();
-				nextCell.movementPut(player);
-				if (player.isHumanPlayer())
-					player.setMove(0);
-				
+				} else {
+					actualCell.clear();
+					nextCell.movementPut(player);
+					if (player.isHumanPlayer())
+						player.setMove(0);
+
+				}
+			} finally {
+				lock.unlock();
 			}
-			lock.unlock();
 		}
 	}
 
