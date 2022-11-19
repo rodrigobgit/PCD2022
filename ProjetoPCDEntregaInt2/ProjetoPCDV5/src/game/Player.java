@@ -144,5 +144,4 @@ public abstract class Player extends Thread  {
 			break;
 		}
 	}
-
 }

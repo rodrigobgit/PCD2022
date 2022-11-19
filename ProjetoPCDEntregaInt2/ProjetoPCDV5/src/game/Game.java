@@ -2,8 +2,6 @@ package game;
 
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import environment.Cell;
 import environment.Coordinate;
 
@@ -20,7 +18,6 @@ public class Game extends Observable { // Game é o objecto Observado
 	private int numWinners;
 	public Cell[][] board;
 	private ArrayList<Player> arrayPlayerThreads; // ArrayList para as Threads de Jogador
-	private Lock lock = new ReentrantLock();
 	
 	public Game() {
 		board = new Cell[Game.DIMX][Game.DIMY]; // Atributo board mantém, exclusivamente, a localização dos jogadores

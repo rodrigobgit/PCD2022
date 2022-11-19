@@ -11,8 +11,8 @@ public class Cell {
 	private Game game;
 	private Player player;
 	private Lock lock = new ReentrantLock();
-	private Condition cellIsOccupied = lock.newCondition();
-	private Condition cellIsFree = lock.newCondition();
+	private Condition cellIsOccupied = lock.newCondition(); // Não apagar (servirá para variáveis condicionais)
+	private Condition cellIsFree = lock.newCondition(); // Não apagar  (servirá para variáveis condicionais)
 	
 	public Cell(Game g, Coordinate position) {
 		super();
@@ -40,6 +40,25 @@ public class Cell {
 		return player != null;
 	}
 
+	/* Não apagar as linhas comentadas que se seguem (servirá para implementar variáveis condicionais)
+	public synchronized void initialPut(Player player) throws InterruptedException { // Usar varáveis condicionais
+		lock.lock();
+		while (isOcupied()) {
+			Player occupantPlayer;
+			occupantPlayer = getPlayer();
+			System.out.println("Sou o jogador " + player.getIdentification() + " e fiquei parado nas coordenadas "
+					+ getPosition().toString() + " por causa do jogador " + occupantPlayer.getIdentification());
+			try {
+				cellIsOccupied.await();
+				setPlayer(player);
+				game.notifyChange();
+				cellIsFree.signalAll();
+			} finally {
+				lock.unlock();
+			}
+		}
+	} */
+
 	public synchronized void initialPut(Player player) { // Usar varáveis condicionais (pelo menos, aqui)
 		while(isOcupied()) {
 			Player occupantPlayer;
@@ -55,7 +74,7 @@ public class Cell {
 		game.notifyChange();
 		notifyAll();
 	}
-
+	
 	// Processa movimento do jogador, colocando-o na nova célula
 	public synchronized void movementPut(Player movingPlayer, Cell currentCell) { // Método instanciado pela nextCell (this)
 		if (isOcupied()) { // nextCell está ocupada por outro jogador
