@@ -14,10 +14,17 @@ public class BotPlayer extends Player {
 	}
 	
 	public void run() {
-		game.addPlayerToGame(this);
+		try {
+			addPlayerToGame();
+		} catch (InterruptedException e1) {
+			return;
+		}
+
 		try {
 			Thread.sleep(Game.INITIAL_WAITING_TIME);
-		} catch (InterruptedException e) {}
+		} catch (InterruptedException e) {
+			return;
+		}
 
 		while (!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10) {
 			try {

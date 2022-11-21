@@ -96,17 +96,22 @@ public abstract class Player extends Thread  {
 		return move;
 	}
 
+	public void addPlayerToGame() throws InterruptedException {
+		// Random determination of a cell
+		Cell initialPos = game.getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
+		// Cell assignmnet to player
+		initialPos.initialPut(this);
+	}
+	
 	public void movePlayer(Player player, Direction dir) {
 		// Calcula celula actual do Player
 		Cell currentCell = getCurrentCell();
-		
+
 		// Calcula coordenada da proxima cell
 		Coordinate currentCoord = currentCell.getPosition();
 		Coordinate nextCoord = currentCoord.translate(dir.getVector());
+		
 		// Verifica se proxima cell está dentro do board
-		
-		
-		
 		if (nextCoord.getX() >= 0 && nextCoord.getY() >= 0 && nextCoord.getX() < Game.DIMX
 				&& nextCoord.getY() < Game.DIMY) {
 			Cell nextCell = game.getCell(nextCoord);
@@ -144,4 +149,5 @@ public abstract class Player extends Thread  {
 			break;
 		}
 	}
+
 }

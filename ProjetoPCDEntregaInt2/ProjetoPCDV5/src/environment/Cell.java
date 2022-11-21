@@ -11,7 +11,6 @@ public class Cell {
 	private Game game;
 	private Player player;
 	private Lock lock = new ReentrantLock();
-	private Condition cellIsOccupied = lock.newCondition(); // Não apagar (servirá para variáveis condicionais)
 	private Condition cellIsFree = lock.newCondition(); // Não apagar  (servirá para variáveis condicionais)
 	
 	public Cell(Game g, Coordinate position) {
@@ -36,68 +35,46 @@ public class Cell {
 		return game.board[at.x][at.y];
 	}
 
-	public boolean isOcupied() {
+	public boolean isOccupied() {
 		return player != null;
 	}
 
-	/* Não apagar as linhas comentadas que se seguem (servirá para implementar variáveis condicionais)
-	public synchronized void initialPut(Player player) throws InterruptedException { // Usar varáveis condicionais
+	public void initialPut(Player player) throws InterruptedException { // Usar varáveis condicionais
 		lock.lock();
-		while (isOcupied()) {
-			Player occupantPlayer;
-			occupantPlayer = getPlayer();
-			System.out.println("Sou o jogador " + player.getIdentification() + " e fiquei parado nas coordenadas "
-					+ getPosition().toString() + " por causa do jogador " + occupantPlayer.getIdentification());
-			try {
-				cellIsOccupied.await();
-				setPlayer(player);
-				game.notifyChange();
-				cellIsFree.signalAll();
-			} finally {
-				lock.unlock();
+		try {
+			while (isOccupied()) {
+				Player occupantPlayer;
+				occupantPlayer = getPlayer();
+				System.out.println("Sou o jogador " + player.getIdentification() + " e fiquei parado nas coordenadas "
+						+ getPosition().toString() + " por causa do jogador " + occupantPlayer.getIdentification());
+				cellIsFree.await();
 			}
+			setPlayer(player);
+			game.notifyChange();
+		} finally {
+			lock.unlock();
 		}
-	} */
-
-	public synchronized void initialPut(Player player) { // Usar varáveis condicionais (pelo menos, aqui)
-		while(isOcupied()) {
-			Player occupantPlayer;
-			occupantPlayer = getPlayer();
-			System.out.println("Sou o jogador " + player.getIdentification() + " e fiquei parado nas coordenadas "
-			+ getPosition().toString() + " por causa do jogador " + occupantPlayer.getIdentification());
-			try {
-				wait();
-			} catch(InterruptedException e) {
-			}
-		}
-		setPlayer(player);	
-		game.notifyChange();
-		notifyAll();
 	}
-	
-	// Processa movimento do jogador, colocando-o na nova célula
-	public synchronized void movementPut(Player movingPlayer, Cell currentCell) { // Método instanciado pela nextCell (this)
-		if (isOcupied()) { // nextCell está ocupada por outro jogador
-			if (this.getPlayer().getCurrentStrength() > 0 && this.getPlayer().getCurrentStrength() < 10) {
-				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer pretende
-			}
 
-// fazer a imobilizacao de 2 seg aqui
-
-		} else {
+	// Processa movimento do jogador
+	public void movementPut(Player movingPlayer, Cell currentCell) { // Método instanciado pela nextCell (this)
+		lock.lock();
+		if (!isOccupied()) { // Célula livre
 			currentCell.setPlayer(null); // Coloca o movingPlayer a null, na currentCell
 			this.setPlayer(movingPlayer); // Coloca o movingPlayer, na nextCell
-			if (movingPlayer.isHumanPlayer())
-				movingPlayer.setMove(0);
+			if (movingPlayer.isHumanPlayer()) movingPlayer.setMove(0);
+			cellIsFree.signalAll();
+			game.notifyChange();
+		} else { // Célula ocupada
+			if (this.getPlayer().getCurrentStrength() > 0 && this.getPlayer().getCurrentStrength() < 10) { // Jogador vivo
+				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer pretende
+				game.notifyChange();
+			}
+
+// fazer a imobilizacao de 2 seg aqui?
+
 		}
-		game.notifyChange();
-		notifyAll();
+		lock.unlock();
 	}
 
-/*	// Limpa celula onde estava o jogador
-	public synchronized void clear() {
-		setPlayer(null);
-		game.notifyChange();
-		notifyAll();
-	}*/
 }

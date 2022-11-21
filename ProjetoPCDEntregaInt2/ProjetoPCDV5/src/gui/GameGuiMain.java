@@ -53,7 +53,7 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 				boardGui.clearLastPressedDirection();
 			}
 		}
-	} 
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {

@@ -48,17 +48,11 @@ public class Game extends Observable { // Game é o objecto Observado
 
 			BotPlayer botPlayer = new BotPlayer(this, i, originalStrength);
 			arrayPlayerThreads.add(botPlayer);
+			System.out.println("Jogador " + botPlayer.getIdentification() + " ficou com a Thread " + botPlayer.getId());
 			botPlayer.start();
 		}
 	}
 	
-	public void addPlayerToGame(Player player) {
-		// Random determination of a cell
-		Cell initialPos = getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
-		// Cell assignmnet to player
-		initialPos.initialPut(player);
-	}
-
 	public Cell getRandomCell() {
 		Cell newCell=getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
 		return newCell; 
@@ -77,7 +71,7 @@ public class Game extends Observable { // Game é o objecto Observado
 		numWinners++;
 		System.out.println("O jogador " + id + " venceu o jogo!");
 		if (numWinners == NUM_FINISHED_PLAYERS_TO_END_GAME) {
-			System.out.println("Temos " + numWinners + " vencedores");		
+			System.out.println("Já há " + numWinners + " vencedores");		
 			gameOver(); 
 		}
 	}
@@ -86,16 +80,16 @@ public class Game extends Observable { // Game é o objecto Observado
 		// Interrompe todas as Threads
 		for (Player pl : arrayPlayerThreads) {
 			pl.interrupt();
+			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
 		}
 		
 		// Espera que terminem todas as Threads
-//		for (Player pl : arrayPlayerThreads) {
-//			try {
-//				pl.join();
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
+		for (Player pl : arrayPlayerThreads) {
+			try {
+				pl.join();
+				System.out.println("Thread " + pl.getId() + " terminou");
+			} catch (InterruptedException e) {}
+		}
 		System.out.println("Game Over!");
 	}
 }

@@ -11,25 +11,29 @@ public class HumanPlayer extends Player {
 	}
 	
 	public void run() {
-		game.addPlayerToGame(this);
+		try {
+			addPlayerToGame();
+		} catch (InterruptedException e1) {
+			return;
+		}
+
 		try {
 			Thread.sleep(Game.INITIAL_WAITING_TIME);
-		} catch (InterruptedException e1) {
+		} catch (InterruptedException e) {
+			return;
 		}
-		while (!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10)
+
+		while (!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10) {
 			try {
 				sleep(interval * getDebuffMultiplier());
-
 				if (move == 1) {
 					movePlayer(this, nextDirection);
 				} else {
-
 				}
 			} catch (InterruptedException e) {
-
-				e.printStackTrace();
+				return;
 			}
-
+		}
 	}
 	
 	public void setNextDirection(Direction direction) {
