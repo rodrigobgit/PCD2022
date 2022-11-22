@@ -13,7 +13,7 @@ public class Game extends Observable { // Game é o objecto Observado
 	public static final long REFRESH_INTERVAL = 100;
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
-	public static final long INITIAL_WAITING_TIME = 2000;
+	public static final long INITIAL_WAITING_TIME = 10000;
 
 	private int numWinners;
 	public Cell[][] board;
@@ -48,7 +48,7 @@ public class Game extends Observable { // Game é o objecto Observado
 
 			BotPlayer botPlayer = new BotPlayer(this, i, originalStrength);
 			arrayPlayerThreads.add(botPlayer);
-			System.out.println("Jogador " + botPlayer.getIdentification() + " ficou com a Thread " + botPlayer.getId());
+//			System.out.println("Jogador " + botPlayer.getIdentification() + " ficou com a Thread " + botPlayer.getId());
 			botPlayer.start();
 		}
 	}
@@ -80,7 +80,7 @@ public class Game extends Observable { // Game é o objecto Observado
 		// Interrompe todas as Threads
 		for (Player pl : arrayPlayerThreads) {
 			pl.interrupt();
-			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
+//			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
 		}
 		
 		// Espera que terminem todas as Threads
