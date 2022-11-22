@@ -82,13 +82,12 @@ public class Game extends Observable { // Game é o objecto Observado
 			pl.interrupt();
 //			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
 		}
-		
-		// Espera que terminem todas as Threads
 		for (Player pl : arrayPlayerThreads) {
 			try {
 				pl.join();
 				System.out.println("Thread " + pl.getId() + " terminou");
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+			}
 		}
 		System.out.println("Game Over!");
 	}
