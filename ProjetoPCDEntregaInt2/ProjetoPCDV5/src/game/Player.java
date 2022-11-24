@@ -16,13 +16,15 @@ public abstract class Player extends Thread  {
 	private byte currentStrength;
 	private byte debuffMultiplier;
 	private int move;
+	private boolean notPlaced;
 
 	public Player(Game game, int id, byte originalStrength) {
 		this.game=game;
 		this.id = id;
 		this.originalStrength=originalStrength;
-		this.currentStrength = originalStrength;
-		this.debuffMultiplier = originalStrength;
+		currentStrength = originalStrength;
+		debuffMultiplier = originalStrength;
+		notPlaced = false;
 	}
 
 	public abstract boolean isHumanPlayer();
@@ -88,6 +90,14 @@ public abstract class Player extends Thread  {
 		return debuffMultiplier;
 	}
 
+	public boolean getNotPlaced() {
+		return notPlaced;
+	}
+	
+	public void setNotPlaced() {
+		notPlaced = true;
+	}
+	
 	public void setMove(int move) {
 		this.move=move;
 	}
@@ -119,7 +129,7 @@ public abstract class Player extends Thread  {
 		}
 	}
 	
-	public void duel(Player occupantPlayer) { // Metodo é instanciado pelo movingPlayer (this)
+	public  void duel(Player occupantPlayer) { // Metodo é instanciado pelo movingPlayer (this)
 		int winner;
 		if (this.getCurrentStrength() > occupantPlayer.getCurrentStrength()) { // movingPlayer winns
 			winner = 1;

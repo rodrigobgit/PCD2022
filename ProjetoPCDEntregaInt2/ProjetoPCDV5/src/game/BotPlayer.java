@@ -1,16 +1,13 @@
 package game;
 
-import environment.Cell;
-import environment.Coordinate;
 import environment.Direction;
 
 public class BotPlayer extends Player {
 	private long interval = Game.REFRESH_INTERVAL;
-
+	private boolean notPlaced;
 
 	public BotPlayer(Game game, int id, byte originalStrength) {
 		super(game, id, originalStrength);
-
 	}
 	
 	public void run() {
@@ -19,11 +16,12 @@ public class BotPlayer extends Player {
 		} catch (InterruptedException e1) {
 			return;
 		}
-
-		try {
-			Thread.sleep(Game.INITIAL_WAITING_TIME);
-		} catch (InterruptedException e) {
-			return;
+		if (!notPlaced) { // Jogador foi colocado no board à primeira tentativa
+			try {
+				Thread.sleep(Game.INITIAL_WAITING_TIME);
+			} catch (InterruptedException e) {
+				return;
+			}
 		}
 
 		while (!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10) {
