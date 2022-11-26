@@ -34,7 +34,6 @@ public class BotPlayer extends Player {
 				return;
 			}
 		}
-		
 	}
 
 	public void rollDice() throws InterruptedException {

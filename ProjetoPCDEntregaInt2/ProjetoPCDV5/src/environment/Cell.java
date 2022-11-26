@@ -79,7 +79,7 @@ public class Cell {
 		} else { // nextCell está livre
 			currentCell.clear();
 			this.setPlayer(movingPlayer); // Coloca o movingPlayer no destino (nextCell)
-			System.out.println("Sou o jogador " + player.getIdentification() + " movimentei para " + getPosition().toString() + " e tenho energia " + player.getCurrentStrength());
+//			System.out.println("Sou o jogador " + player.getIdentification() + " movimentei para " + getPosition().toString() + " e tenho energia " + player.getCurrentStrength());
 			if (movingPlayer.isHumanPlayer())
 				movingPlayer.setMove(0);
 		}

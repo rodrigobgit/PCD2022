@@ -14,7 +14,6 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 	private JFrame frame = new JFrame("pcd.io");
 	private BoardJComponent boardGui;
 	private Game game;
-//	private ArrayList<BotPlayer> arrayBotThreads; // ArrayList para as Threads Bot
 
 	public GameGuiMain() {
 		super();
@@ -36,7 +35,7 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 		game.go();
 		
 		//humano de teste
-		HumanPlayer humanPlayer = new HumanPlayer(game, 90, (byte) 3);		
+/*		HumanPlayer humanPlayer = new HumanPlayer(game, 90, (byte) 3);		
 		humanPlayer.start();		
 		
 		// Fica a dar scan às teclas do jogador humano
@@ -48,7 +47,7 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 				humanPlayer.setNextDirection(boardGui.getLastPressedDirection());
 				boardGui.clearLastPressedDirection();
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -56,33 +55,6 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 		boardGui.repaint();
 	}
 
-/*	public static void gameOver(Game game) {
-		// Interrompe todas as Threads
-		for (Player pl : game.getArrayPlayerThreads()) {
-			pl.interrupt();
-			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
-		}
-		
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-						
-		for (Player pl : game.getArrayPlayerThreads()) {
-			try {
-				pl.join();
-				System.out.println("Thread " + pl.getId() + " terminou");
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Thread " + pl.getId() + " teve problemas no join");
-				e.printStackTrace();
-			}
-		}
-		System.out.println("Game Over!");
-	} */
-	
 	public static void main(String[] args) {
 		GameGuiMain game = new GameGuiMain();
 		game.init();

@@ -66,7 +66,7 @@ public abstract class Player extends Thread  {
 		currentStrength = newStrength;
 		game.notifyChange();
 		if (newStrength == 10)
-			addWinner(id);
+			game.getWinnersCount().countDown(id);
 	}
 
 	public int getIdentification() {
@@ -162,12 +162,4 @@ public abstract class Player extends Thread  {
 		}
 	}
 	
-		public void addWinner(int id) {
-			int numWinners = game.getNumWinnwers();
-			game.setNumWinnwers(++numWinners);
-			System.out.println("O jogador " + id + " foi o vencedor numero " + numWinners +"!");
-			if (numWinners == Game.NUM_FINISHED_PLAYERS_TO_END_GAME)
-				game.gameOver();
-		}
-
 }
