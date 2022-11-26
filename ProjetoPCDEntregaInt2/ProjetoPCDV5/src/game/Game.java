@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Observable;
 import environment.Cell;
 import environment.Coordinate;
+/* import gui.GameGuiMain; */
 
 public class Game extends Observable { // Game é o objecto Observado
 	public static final int DIMY = 30;
 	public static final int DIMX = 30;
 	private static final int NUM_BOT_PLAYERS = 90;
-	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME=3;
+	public static final int NUM_FINISHED_PLAYERS_TO_END_GAME=3;
 	public static final long REFRESH_INTERVAL = 100;
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
@@ -25,6 +26,7 @@ public class Game extends Observable { // Game é o objecto Observado
 			for (int y = 0; y < Game.DIMY; y++) 
 				board[x][y] = new Cell(this, new Coordinate(x, y));
 		this.numWinners = 0;
+/*		arrayPlayerThreads = new ArrayList<>(); */
 	}
 		
 	public void go() {
@@ -61,38 +63,70 @@ public class Game extends Observable { // Game é o objecto Observado
 	public Cell getCell(Coordinate at) {
 		return board[at.x][at.y];
 	}
+
+	public int getNumWinnwers() {
+		return numWinners;
+	}
+
+	public void setNumWinnwers(int numWinners) {
+		this.numWinners = numWinners;
+	}
+	
 	
 	public void notifyChange() {
 		setChanged();
 		notifyObservers();
 	}
 
-	public synchronized void addWinner(int id) {
+/*	public synchronized void addWinner(int id) throws InterruptedException { */
+/*	public synchronized void addWinner(int id) {
 		numWinners++;
 		System.out.println("O jogador " + id + " venceu o jogo!");
 		if (numWinners == NUM_FINISHED_PLAYERS_TO_END_GAME) {
 			System.out.println("Já há " + numWinners + " vencedores");		
-			gameOver(); 
+			gameOver();
 		}
-	}
+	}*/
 
-	private void gameOver() {
-		// Interrompe todas as Threads
+	public void gameOver() {
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		
 		for (Player pl : arrayPlayerThreads) {
 			pl.interrupt();
-//			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
+			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
 		}
+
 		for (Player pl : arrayPlayerThreads) {
+			if (!pl.isAlive()) {
 				try {
 					pl.join();
 					System.out.println("Thread " + pl.getId() + " terminou");
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					System.out.println("Thread numero " + pl.getId());
-					e.printStackTrace();
+					System.out.println("Thread " + pl.getId() + " teve problemas no join");
+					/*
+					 * if (!pl.isInterrupted()) { System.out.println("Thread " + pl.getId() +
+					 * " afinal não estava interrompida"); } if (pl.isInterrupted()) {
+					 * System.out.println("Thread " + pl.getId() + " estava interrompida"); }
+					 * 
+					 * e.printStackTrace();
+					 */
 				}
+			}
+		}
 
+		for (Player pl : arrayPlayerThreads) {
+			System.out.println("Thread " + pl.getId() + " está alive? " + pl.isAlive());
 		}
 		System.out.println("Game Over!");
 	}
+	
+/*	public ArrayList<Player> getArrayPlayerThreads() {
+		return arrayPlayerThreads;
+	} */
 }

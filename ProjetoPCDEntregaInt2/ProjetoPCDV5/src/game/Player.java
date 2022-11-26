@@ -13,18 +13,18 @@ public abstract class Player extends Thread  {
 	protected  Game game;
 	private int id;
 	private byte originalStrength;
+	protected boolean placedAtFirst;
 	private byte currentStrength;
 	private byte debuffMultiplier;
 	private int move;
-	private boolean notPlaced;
 
 	public Player(Game game, int id, byte originalStrength) {
 		this.game=game;
 		this.id = id;
 		this.originalStrength=originalStrength;
+		this.placedAtFirst = true; // Por defeito, assume-se que jogador será colocado a primeira tentativa
 		currentStrength = originalStrength;
 		debuffMultiplier = originalStrength;
-		notPlaced = false;
 	}
 
 	public abstract boolean isHumanPlayer();
@@ -61,10 +61,12 @@ public abstract class Player extends Thread  {
 		return currentStrength;
 	}
 
-	public void setCurrentStrength(byte newStrength) {
+	public void setCurrentStrength(byte newStrength) throws InterruptedException {
 		if (newStrength > 10) newStrength = 10;
 		currentStrength = newStrength;
-		if (newStrength == 10) game.addWinner(id);
+		game.notifyChange();
+		if (newStrength == 10)
+			addWinner(id);
 	}
 
 	public int getIdentification() {
@@ -90,15 +92,15 @@ public abstract class Player extends Thread  {
 		return debuffMultiplier;
 	}
 
-	public boolean getNotPlaced() {
-		return notPlaced;
+	public boolean getPlacedAtFirst() {
+		return placedAtFirst;
 	}
 	
-	public void setNotPlaced() {
-		notPlaced = true;
+	public void setNotPlacedAtFirst() throws InterruptedException {
+		placedAtFirst = false;
 	}
 	
-	public void setMove(int move) {
+	public void setMove(int move) throws InterruptedException {
 		this.move=move;
 	}
 
@@ -113,7 +115,7 @@ public abstract class Player extends Thread  {
 		initialPos.initialPut(this);
 	}
 	
-	public void movePlayer(Player player, Direction dir) {
+	public void movePlayer(Player player, Direction dir) throws InterruptedException {
 		// Calcula celula actual do Player
 		Cell currentCell = getCurrentCell();
 
@@ -129,7 +131,7 @@ public abstract class Player extends Thread  {
 		}
 	}
 	
-	public  void duel(Player occupantPlayer) { // Metodo é instanciado pelo movingPlayer (this)
+	public  void duel(Player occupantPlayer) throws InterruptedException { // Metodo é instanciado pelo movingPlayer (this)
 		int winner;
 		if (this.getCurrentStrength() > occupantPlayer.getCurrentStrength()) { // movingPlayer winns
 			winner = 1;
@@ -159,5 +161,13 @@ public abstract class Player extends Thread  {
 			break;
 		}
 	}
+	
+		public void addWinner(int id) {
+			int numWinners = game.getNumWinnwers();
+			game.setNumWinnwers(++numWinners);
+			System.out.println("O jogador " + id + " foi o vencedor numero " + numWinners +"!");
+			if (numWinners == Game.NUM_FINISHED_PLAYERS_TO_END_GAME)
+				game.gameOver();
+		}
 
 }

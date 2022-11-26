@@ -4,7 +4,6 @@ import environment.Direction;
 
 public class BotPlayer extends Player {
 	private long interval = Game.REFRESH_INTERVAL;
-	private boolean notPlaced;
 
 	public BotPlayer(Game game, int id, byte originalStrength) {
 		super(game, id, originalStrength);
@@ -14,12 +13,14 @@ public class BotPlayer extends Player {
 		try {
 			addPlayerToGame();
 		} catch (InterruptedException e1) {
+			System.out.println("O jogador " + this.getIdentification() + " nao chegou a entrar em jogo");
 			return;
 		}
-		if (!notPlaced) { // Jogador foi colocado no board à primeira tentativa
+		if (placedAtFirst) { // Jogador foi colocado no board à primeira tentativa
 			try {
 				Thread.sleep(Game.INITIAL_WAITING_TIME);
-			} catch (InterruptedException e) {
+			} catch (InterruptedException e2) {
+//				System.out.println("e2 para o jogador " + this.getIdentification() + " na Thread " + Thread.currentThread().getId()) ;
 				return;
 			}
 		}
@@ -28,13 +29,15 @@ public class BotPlayer extends Player {
 			try {
 				sleep(interval * getDebuffMultiplier());
 				rollDice();
-			} catch (InterruptedException e) {
+			} catch (InterruptedException e3) {
+//				System.out.println("e3 para o jogador " + this.getIdentification() + " na Thread " + Thread.currentThread().getId());
 				return;
 			}
 		}
+		
 	}
 
-	public void rollDice() {
+	public void rollDice() throws InterruptedException {
 		// Escolha da direcao para movimento
 		double random=Math.random();
 		Direction nextDirection = null;
@@ -43,8 +46,7 @@ public class BotPlayer extends Player {
 		if (random<0.50 && random>=0.25) nextDirection=environment.Direction.DOWN;
 		if (random<0.75 && random>=0.5)	nextDirection=environment.Direction.LEFT;
 		if (random>=0.75) nextDirection=environment.Direction.RIGHT;
-
-		movePlayer(this, nextDirection);
+		movePlayer(this, nextDirection);	
 	}
 	
 	public boolean isHumanPlayer() {

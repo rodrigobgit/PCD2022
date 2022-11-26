@@ -48,15 +48,15 @@ public class Cell {
 				System.out.println("2 - Sou o jogador " + player.getIdentification()
 						+ " e não fiquei com as coordenadas " + getPosition().toString() + " por causa do jogador "
 						+ occupantPlayer.getIdentification());
-				player.setNotPlaced(); 	// Jogador nao foi colocado à primeira tentativa
-										// Serve para que não tenha de esperar 2 x 10 segundos
+				player.setNotPlacedAtFirst(); 	// Jogador nao foi colocado à primeira tentativa
+												// Serve para que não tenha de esperar 2 x 10 segundos
 				cellIsFree.await();
 				System.out.println("3 - Sou o jogador " + player.getIdentification() + " penso ficar nas coordenadas "
 						+ getPosition().toString());
 			}
 			setPlayer(player);
 			game.notifyChange();
-		if (player.getNotPlaced())
+		if (!player.getPlacedAtFirst())
 			System.out.println("4 - Sou o jogador " + player.getIdentification() + " e fiquei nas coordenadas "
 					+ getPosition().toString());				
 		} finally {
@@ -65,7 +65,10 @@ public class Cell {
 	}
 
 	// Processa movimento do jogador
-	public synchronized void movementPut(Player movingPlayer, Cell currentCell) { // Método é invocado com a instancia nextCell
+	public synchronized void movementPut(Player movingPlayer, Cell currentCell) throws InterruptedException { // Método é invocado com a instancia nextCell
+		if(!(movingPlayer.getCurrentStrength() > 0 && movingPlayer.getCurrentStrength() < 10)) // Reconfirma jogador vivo
+			return;
+		
 		if (isOccupied()) { // nextCell está ocupada por outro jogador
 			if (this.getPlayer().getCurrentStrength() > 0 && this.getPlayer().getCurrentStrength() < 10) {
 				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer pretende
@@ -76,6 +79,7 @@ public class Cell {
 		} else { // nextCell está livre
 			currentCell.clear();
 			this.setPlayer(movingPlayer); // Coloca o movingPlayer no destino (nextCell)
+			System.out.println("Sou o jogador " + player.getIdentification() + " movimentei para " + getPosition().toString() + " e tenho energia " + player.getCurrentStrength());
 			if (movingPlayer.isHumanPlayer())
 				movingPlayer.setMove(0);
 		}
@@ -83,7 +87,7 @@ public class Cell {
 	}
 
 	// Coloca player a null
-	private void clear() {
+	private void clear() throws InterruptedException {
 		lock.lock();
 		try {
 			setPlayer(null);
