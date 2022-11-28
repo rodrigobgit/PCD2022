@@ -25,7 +25,7 @@ public class BotPlayer extends Player {
 			}
 		}
 
-		while (!isInterrupted() && this.getCurrentStrength() > 0 && this.getCurrentStrength() < 10) {
+		while (!isInterrupted() && this.isActive()) {
 			try {
 				sleep(interval * getDebuffMultiplier());
 				rollDice();

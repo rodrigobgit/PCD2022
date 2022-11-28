@@ -161,5 +161,9 @@ public abstract class Player extends Thread  {
 			break;
 		}
 	}
+
+	public boolean isActive() {
+		return (getCurrentStrength() > 0 && getCurrentStrength() < 10);
+	}
 	
 }

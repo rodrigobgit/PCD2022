@@ -70,7 +70,7 @@ public class Cell {
 			return;
 		
 		if (isOccupied()) { // nextCell está ocupada por outro jogador
-			if (this.getPlayer().getCurrentStrength() > 0 && this.getPlayer().getCurrentStrength() < 10) {
+			if (this.getPlayer().isActive()) {
 				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer pretende
 			}
 
