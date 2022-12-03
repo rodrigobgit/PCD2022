@@ -9,7 +9,7 @@ import environment.Coordinate;
 public class Game extends Observable { // Game é o objecto Observado
 	public static final int DIMY = 30;
 	public static final int DIMX = 30;
-	private static final int NUM_BOT_PLAYERS = 90;
+	private static final int NUM_BOT_PLAYERS = 150;
 	public static final int NUM_FINISHED_PLAYERS_TO_END_GAME=3;
 	public static final long REFRESH_INTERVAL = 100;
 	public static final double MAX_INITIAL_STRENGTH = 3;

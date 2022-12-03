@@ -39,26 +39,35 @@ public class Cell {
 		return player != null;
 	}
 
-	public void initialPut(Player player) throws InterruptedException { // Usar varáveis condicionais
+	public void initialPut(Player player) throws InterruptedException { // É invocado com a célula que o jogador pretende para colocação
 		lock.lock();
+
 		try {
-			while (isOccupied()) {
+			if (isOccupied()) { // Célula ocupada -> sysout com informação
 				Player occupantPlayer;
 				occupantPlayer = getPlayer();
 				System.out.println("2 - Sou o jogador " + player.getIdentification()
 						+ " e não fiquei com as coordenadas " + getPosition().toString() + " por causa do jogador "
 						+ occupantPlayer.getIdentification());
-				player.setNotPlacedAtFirst(); 	// Jogador nao foi colocado à primeira tentativa
-												// Serve para que não tenha de esperar 2 x 10 segundos
-				cellIsFree.await();
-				System.out.println("3 - Sou o jogador " + player.getIdentification() + " penso ficar nas coordenadas "
-						+ getPosition().toString());
+				player.setNotPlacedAtFirst(); // Jogador nao foi colocado à primeira tentativa. Variável serve para que não tenha de esperar 2 x 10 segundos
 			}
+			
+			while (isOccupied() && getPlayer().isActive()) { // Encontrou jogador ativo na célula
+				System.out.println("3 - Sou o jogador " + player.getIdentification() + " e o jogador ocupante está ativo");
+				cellIsFree.await();
+			}
+	
+			if (isOccupied() && !getPlayer().isActive()) { // Encontrou jogador não ativo
+				System.out.println("4 - Sou o jogador " + player.getIdentification() + " e o jogador ocupante está inativo. Vou tentar outra célula");
+				player.addPlayerToGame(); // Tenta outra posição inicial (recursivamente)
+				return;
+			}
+
 			setPlayer(player);
 			game.notifyChange();
-		if (!player.getPlacedAtFirst())
-			System.out.println("4 - Sou o jogador " + player.getIdentification() + " e fiquei nas coordenadas "
-					+ getPosition().toString());				
+			if (!player.getPlacedAtFirst())
+				System.out.println("5 - Sou o jogador " + player.getIdentification() + " e fiquei nas coordenadas "
+						+ getPosition().toString());
 		} finally {
 			lock.unlock();
 		}
@@ -66,34 +75,41 @@ public class Cell {
 
 	// Processa movimento do jogador
 	public synchronized void movementPut(Player movingPlayer, Cell currentCell) throws InterruptedException { // Método é invocado com a instancia nextCell
-		if(!(movingPlayer.getCurrentStrength() > 0 && movingPlayer.getCurrentStrength() < 10)) // Reconfirma jogador vivo
+		if(!movingPlayer.isActive()) // Reconfirma jogador vivo
 			return;
 		
 		if (isOccupied()) { // nextCell está ocupada por outro jogador
 			if (this.getPlayer().isActive()) {
 				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer pretende
-			}
+			}	
 
 // fazer a imobilizacao de 2 seg aqui
 
 		} else { // nextCell está livre
 			currentCell.clear();
+			currentCell.releaseAwaitingPlayers();
 			this.setPlayer(movingPlayer); // Coloca o movingPlayer no destino (nextCell)
 //			System.out.println("Sou o jogador " + player.getIdentification() + " movimentei para " + getPosition().toString() + " e tenho energia " + player.getCurrentStrength());
 			if (movingPlayer.isHumanPlayer())
 				movingPlayer.setMove(0);
 		}
+		
 		game.notifyChange();
 	}
 
 	// Coloca player a null
-	private void clear() throws InterruptedException {
+	private synchronized void clear() throws InterruptedException {
+		setPlayer(null);
+	}
+	
+	// Sinaliza quem está bloqueado em espera por célula disponível, em initialPut()
+	public void releaseAwaitingPlayers() throws InterruptedException {
 		lock.lock();
 		try {
-			setPlayer(null);
 			cellIsFree.signalAll();
 		} finally {
 			lock.unlock();
 		}
 	}
+
 }

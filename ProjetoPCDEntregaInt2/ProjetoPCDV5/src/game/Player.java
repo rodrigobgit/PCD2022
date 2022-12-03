@@ -65,8 +65,10 @@ public abstract class Player extends Thread  {
 		if (newStrength > 10) newStrength = 10;
 		currentStrength = newStrength;
 		game.notifyChange();
-		if (newStrength == 10)
+		if (newStrength == 10) 
 			game.getWinnersCount().countDown(id);
+		if 	(newStrength == 0 || newStrength == 10)
+			getCurrentCell().releaseAwaitingPlayers();
 	}
 
 	public int getIdentification() {
