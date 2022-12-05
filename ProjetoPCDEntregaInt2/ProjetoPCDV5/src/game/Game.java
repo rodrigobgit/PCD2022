@@ -91,7 +91,7 @@ public class Game extends Observable { // Game é o objecto Observado
 			if (!pl.isAlive()) {
 				try {
 					pl.join();
-//					System.out.println("Thread " + pl.getId() + " terminou");
+					System.out.println("Thread " + pl.getId() + " terminou");
 				} catch (InterruptedException e) {
 					System.out.println("Thread " + pl.getId() + " teve problemas no join");
 				}
