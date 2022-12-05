@@ -5,11 +5,12 @@ import java.util.Observable;
 import environment.Cell;
 import environment.Coordinate;
 /* import gui.GameGuiMain; */
+import environment.TwoSecondsWait;
 
 public class Game extends Observable { // Game é o objecto Observado
 	public static final int DIMY = 30;
 	public static final int DIMX = 30;
-	private static final int NUM_BOT_PLAYERS = 150;
+	private static final int NUM_BOT_PLAYERS = 90;
 	public static final int NUM_FINISHED_PLAYERS_TO_END_GAME=3;
 	public static final long REFRESH_INTERVAL = 100;
 	public static final double MAX_INITIAL_STRENGTH = 3;
@@ -20,6 +21,7 @@ public class Game extends Observable { // Game é o objecto Observado
 
 	public Cell[][] board;
 	private ArrayList<Player> arrayPlayerThreads; // ArrayList para as Threads de Jogador
+	private ArrayList<TwoSecondsWait> arrayTwoSecondsThreads; // ArrayList para as Threads de espera
 	
 	public Game() {
 		board = new Cell[Game.DIMX][Game.DIMY]; // Atributo board mantém, exclusivamente, a localização dos jogadores
@@ -32,6 +34,8 @@ public class Game extends Observable { // Game é o objecto Observado
 		
 	public void go() {
 		arrayPlayerThreads = new ArrayList<>();
+		arrayTwoSecondsThreads = new ArrayList<>();
+		
 
 		lwc.start();
 			
@@ -82,27 +86,48 @@ public class Game extends Observable { // Game é o objecto Observado
 	}
 
 	public void gameOver() {
+/*		for (TwoSecondsWait tsw : arrayTwoSecondsThreads) {
+			tsw.interrupt();
+			System.out.println("Thread " + tsw.getId() + " foi interrompida");
+		}
+		for (TwoSecondsWait tsw : arrayTwoSecondsThreads) {
+			if (tsw.isAlive()) {
+				try {
+					tsw.join();
+					System.out.println("Thread " + tsw.getId() + " terminou");
+
+				} catch (InterruptedException e) {
+					System.out.println("Thread " + tsw.getId() + " teve problemas no join");
+				}
+			}
+		} */
 		for (Player pl : arrayPlayerThreads) {
 			pl.interrupt();
 //			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
 		}
-
 		for (Player pl : arrayPlayerThreads) {
-			if (!pl.isAlive()) {
+			if (pl.isAlive()) {
 				try {
 					pl.join();
-					System.out.println("Thread " + pl.getId() + " terminou");
-				} catch (InterruptedException e) {
-					System.out.println("Thread " + pl.getId() + " teve problemas no join");
+//					System.out.println("Thread " + pl.getId() + " terminou");
+				} catch (InterruptedException e1) {
+//					System.out.println("Thread " + pl.getId() + " teve problemas no join");
 				}
 			}
 		}
 
+		
 /*		for (Player pl : arrayPlayerThreads) {
 			System.out.println("Thread " + pl.getId() + " está alive? " + pl.isAlive());
 		}*/
 		
 		System.out.println("Game Over!");
+	}
+
+	public void goThreadTwoSeconds(Player player) throws InterruptedException {
+		TwoSecondsWait tsw = new TwoSecondsWait(player); // Thread para provocar espera de dois segundos
+		arrayTwoSecondsThreads.add(tsw);
+		tsw.start();
 	}
 	
 }

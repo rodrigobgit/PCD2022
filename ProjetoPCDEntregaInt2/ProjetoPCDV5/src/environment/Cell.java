@@ -1,5 +1,6 @@
 package environment;
 
+import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,7 +13,7 @@ public class Cell {
 	private Player player;
 	private Lock lock = new ReentrantLock();
 	private Condition cellIsFree = lock.newCondition(); // Não apagar  (servirá para variáveis condicionais)
-	
+
 	public Cell(Game g, Coordinate position) {
 		super();
 		this.game=g;
@@ -77,13 +78,19 @@ public class Cell {
 	public synchronized void movementPut(Player movingPlayer, Cell currentCell) throws InterruptedException { // Método é invocado com a instancia nextCell
 		if(!movingPlayer.isActive()) // Reconfirma jogador vivo
 			return;
-		
+///		game.goThreadTwoSeconds(movingPlayer);
 		if (isOccupied()) { // nextCell está ocupada por outro jogador
 			if (this.getPlayer().isActive()) {
-				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer pretende
-			}	
-
-// fazer a imobilizacao de 2 seg aqui
+				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer quer
+///			} else { // Célula ocupada por jogador não vivo
+///				if (!Thread.currentThread().isInterrupted()) {
+///					try {
+///						wait();
+///					} catch (InterruptedException e) {
+///						return;
+///					}
+///				}
+			}
 
 		} else { // nextCell está livre
 			currentCell.clear();

@@ -31,6 +31,7 @@ public class BotPlayer extends Player {
 				rollDice();
 			} catch (InterruptedException e3) {
 //				System.out.println("e3 para o jogador " + this.getIdentification() + " na Thread " + Thread.currentThread().getId());
+//				System.out.println("XXX - O jogador " + getIdentification() + " imobilizou nas coordenadas " + getCurrentCell().getPosition().toString());
 				return;
 			}
 		}
