@@ -1,6 +1,5 @@
 package environment;
 
-import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -75,23 +74,25 @@ public class Cell {
 	}
 
 	// Processa movimento do jogador
-	public synchronized void movementPut(Player movingPlayer, Cell currentCell) throws InterruptedException { // Método é invocado com a instancia nextCell
-		if(!movingPlayer.isActive()) // Reconfirma jogador vivo
+	// Método é invocado com a instancia nextCell
+	public synchronized void movementPut(Player movingPlayer, Cell currentCell) throws InterruptedException { 
+		if (!movingPlayer.isActive()) // Reconfirma jogador vivo
 			return;
-///		game.goThreadTwoSeconds(movingPlayer);
 		if (isOccupied()) { // nextCell está ocupada por outro jogador
 			if (this.getPlayer().isActive()) {
 				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer quer
-///			} else { // Célula ocupada por jogador não vivo
-///				if (!Thread.currentThread().isInterrupted()) {
-///					try {
-///						wait();
-///					} catch (InterruptedException e) {
-///						return;
-///					}
-///				}
+			} else { // Célula ocupada por jogador não vivo
+				game.goThreadTwoSeconds(movingPlayer);
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					if (game.getEndOfGame()) { // Game is over
+						Thread.currentThread().interrupt(); // Porque catch fez reset ao Interrupt status
+					} else {
+						return;
+					}
+				}
 			}
-
 		} else { // nextCell está livre
 			currentCell.clear();
 			currentCell.releaseAwaitingPlayers();
@@ -100,7 +101,7 @@ public class Cell {
 			if (movingPlayer.isHumanPlayer())
 				movingPlayer.setMove(0);
 		}
-		
+
 		game.notifyChange();
 	}
 
@@ -109,7 +110,7 @@ public class Cell {
 		setPlayer(null);
 	}
 	
-	// Sinaliza quem está bloqueado em espera por célula disponível, em initialPut()
+	// Sinaliza quem está bloqueado em espera por célula disponível (em initialPut())
 	public void releaseAwaitingPlayers() throws InterruptedException {
 		lock.lock();
 		try {

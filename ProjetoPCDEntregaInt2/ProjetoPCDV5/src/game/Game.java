@@ -15,9 +15,10 @@ public class Game extends Observable { // Game é o objecto Observado
 	public static final long REFRESH_INTERVAL = 100;
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
-	public static final long INITIAL_WAITING_TIME = 10000;
+	public static final long INITIAL_WAITING_TIME = 5000;
 	private LaunchWinnersCount lwc; // LaunchWinnersCount é a thread que lanca um CounterDownLatch
 	private WinnersCount wc; // WinnersCount é o CounterDownLatch
+	private boolean endOfGame = false;
 
 	public Cell[][] board;
 	private ArrayList<Player> arrayPlayerThreads; // ArrayList para as Threads de Jogador
@@ -35,8 +36,6 @@ public class Game extends Observable { // Game é o objecto Observado
 	public void go() {
 		arrayPlayerThreads = new ArrayList<>();
 		arrayTwoSecondsThreads = new ArrayList<>();
-		
-
 		lwc.start();
 			
 		// Meter bots em movimento
@@ -79,6 +78,10 @@ public class Game extends Observable { // Game é o objecto Observado
 	public void setWinnersCount(WinnersCount wc) {
 		this.wc = wc;
 	}
+
+	public boolean getEndOfGame(){
+		return endOfGame;
+	}
 	
 	public void notifyChange() {
 		setChanged();
@@ -86,32 +89,37 @@ public class Game extends Observable { // Game é o objecto Observado
 	}
 
 	public void gameOver() {
-/*		for (TwoSecondsWait tsw : arrayTwoSecondsThreads) {
+		endOfGame = true;
+
+		for (TwoSecondsWait tsw : arrayTwoSecondsThreads) {
 			tsw.interrupt();
-			System.out.println("Thread " + tsw.getId() + " foi interrompida");
+//			System.out.println("Thread " + tsw.getId() + " foi interrompida");
 		}
+		// Retirar no fim (ciclo join() não é necessário)
 		for (TwoSecondsWait tsw : arrayTwoSecondsThreads) {
 			if (tsw.isAlive()) {
 				try {
 					tsw.join();
-					System.out.println("Thread " + tsw.getId() + " terminou");
+//					System.out.println("Thread " + tsw.getId() + " terminou");
 
 				} catch (InterruptedException e) {
 					System.out.println("Thread " + tsw.getId() + " teve problemas no join");
 				}
 			}
-		} */
+		}
+		
 		for (Player pl : arrayPlayerThreads) {
 			pl.interrupt();
 //			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
 		}
+		// Retirar no fim (ciclo join() não é necessário)
 		for (Player pl : arrayPlayerThreads) {
 			if (pl.isAlive()) {
 				try {
 					pl.join();
 //					System.out.println("Thread " + pl.getId() + " terminou");
 				} catch (InterruptedException e1) {
-//					System.out.println("Thread " + pl.getId() + " teve problemas no join");
+					System.out.println("Thread " + pl.getId() + " teve problemas no join");
 				}
 			}
 		}
