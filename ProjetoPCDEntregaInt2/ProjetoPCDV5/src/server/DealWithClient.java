@@ -53,7 +53,7 @@ public class DealWithClient extends Thread {
 		
 				
 		//manda o estado no jogo no momento que o cliente liga		
-		//out.writeObject(new Message(game.getBoard()));
+		out.writeObject(new Message(game.getBoard()));
 		
 		//manda atualizacao do estado do jogo ciclicamente
 		while (true) {
