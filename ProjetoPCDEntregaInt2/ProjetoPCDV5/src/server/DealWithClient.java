@@ -1,22 +1,24 @@
 package server;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+
+import game.Game;
+import game.HumanPlayer;
+import utils.Message;
 
 public class DealWithClient extends Thread {
 
 	private Socket socket;
-	private BufferedReader in;
-	private PrintWriter out;
+	private BufferedReader  in;
+	private ObjectOutputStream out;
+	private Server server;
+	
 
-	public DealWithClient(Socket socket) {
+	public DealWithClient(Socket socket,Server server) {
 		super();
 		this.socket = socket;
+		this.server=server;
 	}
 
 	@Override
@@ -24,7 +26,7 @@ public class DealWithClient extends Thread {
 		try {
 			doConnections(socket);
 			serve();
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -37,18 +39,28 @@ public class DealWithClient extends Thread {
 	}
 
 	private void doConnections(Socket socket) throws IOException {
-		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-				socket.getOutputStream())), true);
+		out = new ObjectOutputStream (socket.getOutputStream());
+		in = new BufferedReader (new InputStreamReader ( socket.getInputStream ()));
 	}
 
-	private void serve() throws IOException {
+	private void serve() throws IOException, InterruptedException {
+		
+		Game game=server.getGame();
+		
+		//ver esta situacao do id, que id devemos meter etc
+		HumanPlayer player=new HumanPlayer(game, 90, (byte) 5);
+		player.start();
+		
+				
+		//manda o estado no jogo no momento que o cliente liga		
+		//out.writeObject(new Message(game.getBoard()));
+		
+		//manda atualizacao do estado do jogo ciclicamente
 		while (true) {
-			String str = in.readLine();
-			if (str.equals("FIM"))
-				break;
-			System.out.println("Eco: " + str);
-			out.println(str);
+			sleep(Game.REFRESH_INTERVAL);
+			//fazer o out.write
+			
+			
 		}
 	}
 

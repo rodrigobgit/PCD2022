@@ -10,12 +10,12 @@ import environment.TwoSecondsWait;
 public class Game extends Observable { // Game é o objecto Observado
 	public static final int DIMY = 30;
 	public static final int DIMX = 30;
-	private static final int NUM_BOT_PLAYERS = 90;
+	private static final int NUM_BOT_PLAYERS = 50;
 	public static final int NUM_FINISHED_PLAYERS_TO_END_GAME=3;
-	public static final long REFRESH_INTERVAL = 100;
+	public static final long REFRESH_INTERVAL = 400;
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
-	public static final long INITIAL_WAITING_TIME = 5000;
+	public static final long INITIAL_WAITING_TIME = 10000;
 	private LaunchWinnersCount lwc; // LaunchWinnersCount é a thread que lanca um CounterDownLatch
 	private WinnersCount wc; // WinnersCount é o CounterDownLatch
 	private boolean endOfGame = false;
@@ -66,7 +66,12 @@ public class Game extends Observable { // Game é o objecto Observado
 		Cell newCell=getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
 		return newCell; 
 	}
-	
+	public Cell[][] getBoard() {
+		return board;
+	}
+	public void setBoard(Cell[][] board) {
+		this.board = board;
+	}
 	public Cell getCell(Coordinate at) {
 		return board[at.x][at.y];
 	}
