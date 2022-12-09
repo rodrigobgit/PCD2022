@@ -1,9 +1,7 @@
 package client;
 
-import environment.Coordinate;
-import environment.Direction;
-import game.Game;
-import game.Player;
+
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -12,8 +10,13 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+
+
+import utils.*;
 
 /**
  * Creates a JComponent to display the game state.
@@ -29,7 +32,7 @@ public class BoardJComponent extends JComponent implements KeyListener {
 	private Game game;
 	private Image obstacleImage = new ImageIcon("obstacle.png").getImage();
 	private Image humanPlayerImage= new ImageIcon("abstract-user-flat.png").getImage();
-	private Direction lastPressedDirection=null;
+	private String lastPressedDirection=null;
 	
 	public BoardJComponent(Game game) {
 		this.game = game;
@@ -48,62 +51,72 @@ public class BoardJComponent extends JComponent implements KeyListener {
 		}
 		for (int x = 1; x < Game.DIMX; x++) {
 			g.drawLine( (int)(x * cellWidth),0, (int)(x* cellWidth), getHeight());
-		}
-		for (int x = 0; x < Game.DIMX; x++) 
-			for (int y = 0; y < Game.DIMY; y++) {
-				Coordinate p = new Coordinate(x, y);
-
-				Player player = game.getCell(p).getPlayer();
-				if(player!=null) {
-					// Fill yellow if there is a dead player
-					if(player.getCurrentStrength()==0) {
+		}		
+			
+				Message msg=game.getMsg();
+				if(msg!=null) {
+				ArrayList<Data> data=msg.getInfo();
+				for ( Data dt: data) {					
+					if(dt.getStrength()==0) {
 						g.setColor(Color.YELLOW);
-						g.fillRect((int)(p.x* cellWidth), 
-								(int)(p.y * cellHeight),
+						g.fillRect((int)(dt.getxPos()* cellWidth), 
+								(int)(dt.getyPos() * cellHeight),
 								(int)(cellWidth),(int)(cellHeight));
-						g.drawImage(obstacleImage, (int)(p.x * cellWidth), (int)(p.y*cellHeight), 
+						g.drawImage(obstacleImage, (int)(dt.getxPos() * cellWidth), (int)(dt.getyPos()*cellHeight), 
 								(int)(cellWidth),(int)(cellHeight), null);
 						// if player is dead, don'd draw anything else?
 						continue;
 					}
 					// Fill green if it is a human player
-					if(player.isHumanPlayer()) {
+					if(dt.isHuman()) {
 						g.setColor(Color.GREEN);
-						g.fillRect((int)(p.x* cellWidth), 
-								(int)(p.y * cellHeight),
+						g.fillRect((int)(dt.getxPos()* cellWidth), 
+								(int)(dt.getyPos() * cellHeight),
 								(int)(cellWidth),(int)(cellHeight));
 						// Custom icon?
-						g.drawImage(humanPlayerImage, (int)(p.x * cellWidth), (int)(p.y*cellHeight), 
+						g.drawImage(humanPlayerImage, (int)(dt.getxPos() * cellWidth), (int)(dt.getyPos()*cellHeight), 
 								(int)(cellWidth),(int)(cellHeight), null);
 					}
-					g.setColor(new Color(player.getIdentification() * 1000));
+					g.setColor(new Color(50 * 1000));
 					((Graphics2D) g).setStroke(new BasicStroke(5));
 					Font font = g.getFont().deriveFont( (float)cellHeight);
 					g.setFont( font );
-					String strengthMarking=(player.getCurrentStrength()==10?"X":""+player.getCurrentStrength());
+					String strengthMarking=(dt.getStrength()==10?"X":""+dt.getStrength());
 					g.drawString(strengthMarking,
-							(int) ((p.x + .2) * cellWidth),
-							(int) ((p.y + .9) * cellHeight));
+							(int) ((dt.getxPos() + .2) * cellWidth),
+							(int) ((dt.getyPos() + .9) * cellHeight));
 				}
 
 			}
 	}
+	
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyCode()){
-		
+		case KeyEvent.VK_W:
+			lastPressedDirection="UP";
+			break;
+		case KeyEvent.VK_A:
+			lastPressedDirection="LEFT";			
+			break;
+		case KeyEvent.VK_S:
+			lastPressedDirection="DOWN";
+			break;
+		case KeyEvent.VK_D:
+			lastPressedDirection="RIGHT";
+			break;
 		case KeyEvent.VK_LEFT :
-			lastPressedDirection=environment.Direction.LEFT;			
+			lastPressedDirection="LEFT";			
 			break;
 		case KeyEvent.VK_RIGHT:
-			lastPressedDirection=environment.Direction.RIGHT;
+			lastPressedDirection="RIGHT";
 			break;
 		case KeyEvent.VK_UP:
-			lastPressedDirection=environment.Direction.UP;
+			lastPressedDirection="UP";
 			break;
 		case KeyEvent.VK_DOWN:
-			lastPressedDirection=environment.Direction.DOWN;
+			lastPressedDirection="DOWN";
 			break;
 		}
 	}
@@ -119,7 +132,7 @@ public class BoardJComponent extends JComponent implements KeyListener {
 		// Ignored...
 	}
 
-	public Direction getLastPressedDirection() {
+	public String getLastPressedDirection() {
 		return lastPressedDirection;
 	}
 

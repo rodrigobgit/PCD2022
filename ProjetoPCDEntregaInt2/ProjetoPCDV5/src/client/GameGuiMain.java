@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent; // New
 import java.awt.event.KeyListener; // New
 import java.util.Observable;
 import java.util.Observer;
-import game.Game;
+
 
 import javax.swing.JFrame;
 

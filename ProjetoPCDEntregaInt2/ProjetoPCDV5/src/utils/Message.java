@@ -1,21 +1,22 @@
 package utils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import environment.Cell;
 
 
 public class Message implements Serializable {		
-	public final transient Cell[][]board;
+	private final ArrayList<Data> info; 
 	public final int isOver;
 	
-	public Message(Cell[][] board,int isOver) {
-		this.board=board;
+	public Message(ArrayList<Data>info,int isOver) {
+		this.info=info;
 		this.isOver=isOver;
 	
 	}
-	public Cell[][] getBoard() {
-		return board;
+	public ArrayList<Data> getInfo() {
+		return info;
 	}
 	
 	

@@ -2,9 +2,8 @@ package client;
 
 import java.io.*;
 import java.net.*;
-import game.Game;
 import utils.Message;
-
+import utils.Data;
 
 public class DealWithServer extends Thread{
 	
@@ -13,7 +12,7 @@ public class DealWithServer extends Thread{
 	private PrintWriter out;
 	private Socket socket;	
 	private GameGuiMain gui;
-	
+	private boolean isReceiving=false;
 	public DealWithServer(Socket socket) {
 		super();
 		this.socket=socket;
@@ -37,11 +36,20 @@ public class DealWithServer extends Thread{
 	
 	public void serve() throws ClassNotFoundException, IOException {
 				
-		
-		Message first=(Message)in.readObject();	
 		game=new Game();		
 		gui=new GameGuiMain(game);		
 		gui.init();
+//		game.notifyChange();
+//		isReceiving=true;
+		while(!isGameOver()){
+			Message msg=(Message)in.readObject();
+			game.setMsg(msg);
+			game.notifyChange();
+			
+		}
+		
+		
+		
 		
 		
 		
@@ -54,7 +62,9 @@ public class DealWithServer extends Thread{
 		
 	}
 	
-	
+	public boolean isReceiving() {
+		return isReceiving;
+	}
 	
 	
 	private void doConnections(Socket socket) throws IOException {

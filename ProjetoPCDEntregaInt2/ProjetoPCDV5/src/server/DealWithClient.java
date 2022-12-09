@@ -2,9 +2,13 @@ package server;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
+import environment.Cell;
+import environment.Coordinate;
 import game.Game;
 import game.HumanPlayer;
+import utils.Data;
 import utils.Message;
 
 public class DealWithClient extends Thread {
@@ -13,6 +17,7 @@ public class DealWithClient extends Thread {
 	private BufferedReader  in;
 	private ObjectOutputStream out;
 	private Server server;
+	Message msg;
 	
 
 	public DealWithClient(Socket socket,Server server) {
@@ -49,19 +54,42 @@ public class DealWithClient extends Thread {
 		
 		int playerID=server.getNewPlayerID();		
 		HumanPlayer player=new HumanPlayer(game, playerID, (byte) 5);
-		player.start();
+		player.start();		
 		
-				
-		//manda o estado no jogo no momento que o cliente liga		
-		out.writeObject(new Message(game.getBoard(),0));
+		
+		
+		
+		
 		
 		//manda atualizacao do estado do jogo ciclicamente
 		while (true) {
 			sleep(Game.REFRESH_INTERVAL);
-			//fazer o out.write
-			//out.writeObject(new Message(game.getBoard()));
+			refreshData(game);
+			//fazer o out.write			
+			out.writeObject(msg);
+			//out.close();
+			
 			
 		}
+	}
+	public void refreshData(Game game) {
+		ArrayList<Data> info = new ArrayList<>(); 
+		msg=new Message(info,0);
+		for (int x = 0; x < Game.DIMX; x++) {
+			for (int y = 0; y < Game.DIMY; y++) {
+				if(game.board[x][y].isOccupied()) {
+					int xPos=game.board[x][y].getPosition().getX();
+					int yPos=game.board[x][y].getPosition().getY();
+					int strength=game.board[x][y].getPlayer().getCurrentStrength();
+					boolean isHuman=game.board[x][y].getPlayer().isHumanPlayer();
+					Data data=new Data(xPos,yPos,strength,isHuman);
+					info.add(data);
+				}
+			}
+	}
+		
+		
+		
 	}
 
 }
