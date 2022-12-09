@@ -19,19 +19,26 @@ public class Client {
 	private Socket socket;
 	private InetAddress ip;
 	private int port;
+	private boolean useArrows;
 	
 	
 	
-	public Client(InetAddress ip, int port) {
+	public Client(InetAddress ip, int port,boolean useArrows) {
 		this.ip=ip;
 		this.port=port;
+		this.useArrows=useArrows;
 		
 	}
 	
 	public static void main(String[] args) throws IOException {
 		InetAddress serverip=InetAddress.getByName(args[0]);
 		int serverport=Integer.parseInt(args[1]);
-		Client client=new Client(serverip,serverport);
+		boolean choice=true;
+		if(args[2].equals("arrows"))choice=true;
+		if(args[2].equals("letters"))choice=false;
+		
+		
+		Client client=new Client(serverip,serverport,choice);
 		client.runClient();
 		
 	}

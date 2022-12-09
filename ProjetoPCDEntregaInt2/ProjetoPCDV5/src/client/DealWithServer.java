@@ -7,8 +7,7 @@ import utils.Message;
 
 
 public class DealWithServer extends Thread{
-	private String server;
-	private int port;
+	
 	private Game game;
 	private ObjectInputStream in;
 	private PrintWriter out;
@@ -41,10 +40,11 @@ public class DealWithServer extends Thread{
 		
 		Message first=(Message)in.readObject();	
 		game=new Game();		
-		gui=new GameGuiMain(game);
-		//game.setBoard(first.getBoard());
-		
+		gui=new GameGuiMain(game);		
 		gui.init();
+		
+		
+		
 		
 
 		

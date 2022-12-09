@@ -47,19 +47,19 @@ public class DealWithClient extends Thread {
 		
 		Game game=server.getGame();
 		
-		//ver esta situacao do id, que id devemos meter etc
-		HumanPlayer player=new HumanPlayer(game, 90, (byte) 5);
+		int playerID=server.getNewPlayerID();		
+		HumanPlayer player=new HumanPlayer(game, playerID, (byte) 5);
 		player.start();
 		
 				
 		//manda o estado no jogo no momento que o cliente liga		
-		out.writeObject(new Message(game.getBoard()));
+		out.writeObject(new Message(game.getBoard(),0));
 		
 		//manda atualizacao do estado do jogo ciclicamente
 		while (true) {
 			sleep(Game.REFRESH_INTERVAL);
 			//fazer o out.write
-			
+			//out.writeObject(new Message(game.getBoard()));
 			
 		}
 	}
