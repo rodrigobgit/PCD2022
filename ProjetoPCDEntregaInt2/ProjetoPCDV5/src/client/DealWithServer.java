@@ -4,10 +4,8 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.*;
 import utils.Message;
-import utils.Data;
 
 public class DealWithServer extends Thread{
-	
 	private Game game;
 	private ObjectInputStream in;
 	private PrintWriter out;
@@ -19,7 +17,6 @@ public class DealWithServer extends Thread{
 		super();
 		this.socket=socket;
 	}
-	
 	
 	public void run() {
 		try {
@@ -37,39 +34,26 @@ public class DealWithServer extends Thread{
 	}
 	
 	public void serve() throws ClassNotFoundException, IOException {
-				
-		game=new Game();		
-		gui=new GameGuiMain(game);		
+		game = new Game();
+		gui = new GameGuiMain(game);
 		gui.init();
 		KeyEvent e = new KeyEvent(gui.getBoardGui(), 1, 20, 1, 10, 'a');
-		while(!isGameOver()){
-			Message msg=(Message)in.readObject();
-			if(msg.isOver==0) {
+		while (!isGameOver()) {
+			Message msg = (Message) in.readObject();
+			if (msg.isOver == 0) {
 				game.setMsg(msg);
-				game.notifyChange();			
-				gui.getBoardGui().keyPressed(e);	
+				game.notifyChange();
+				gui.getBoardGui().keyPressed(e);
 				out.println(gui.getBoardGui().getLastPressedDirection());
 				gui.getBoardGui().clearLastPressedDirection();
-			}
-			else {
-				isGameOver=true;
+			} else {
+				isGameOver = true;
 				in.close();
 				out.close();
-				
 			}
-				
-				
-			}
-			
-			
-			
-	}
+		}
+	}		
 		
-		
-	
-	
-	
-	
 	private void doConnections(Socket socket) throws IOException {
 		in = new ObjectInputStream ( socket.getInputStream ());
 		out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
@@ -79,4 +63,5 @@ public class DealWithServer extends Thread{
 	public boolean isGameOver() {
 		return isGameOver;
 	}
+	
 }

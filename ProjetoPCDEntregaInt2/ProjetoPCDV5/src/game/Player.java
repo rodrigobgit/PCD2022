@@ -118,6 +118,7 @@ public abstract class Player extends Thread  {
 	}
 	
 	public void movePlayer(Player player, Direction dir) throws InterruptedException {
+		game.setStarted(true);
 		// Calcula celula actual do Player
 		Cell currentCell = getCurrentCell();
 

@@ -1,18 +1,11 @@
 package client;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-
-import javax.net.ssl.SSLException;
 import javax.swing.JOptionPane;
-
-
 
 public class Client {
 	private BufferedReader in;
@@ -21,14 +14,11 @@ public class Client {
 	private InetAddress ip;
 	private int port;
 	private boolean useArrows;
-	
-	
-	
+
 	public Client(InetAddress ip, int port,boolean useArrows) {
 		this.ip=ip;
 		this.port=port;
 		this.useArrows=useArrows;
-		
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -39,41 +29,33 @@ public class Client {
 		if(which==0)choice=true;
 		else choice=false;
 		
-
-		
-		
 		Client client=new Client(serverip,serverport,choice);
 		client.runClient();
-		
 	}
 
 	public void runClient() throws IOException {
-		
 		try {
 			connectToServer();
-			DealWithServer dws=new DealWithServer(socket);
+			DealWithServer dws = new DealWithServer(socket);
 			dws.start();
-			
-			//para manter a ligação aberta por agora
-			while(!dws.isGameOver()) {
+
+			// para manter a ligaï¿½ï¿½o aberta por agora
+			while (!dws.isGameOver()) {
 				try {
 					Thread.sleep(2000);
-					
+
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
 			}
-			
-			
-		} finally {	
-			
+		} finally {
+
 			try {
 				socket.close();
-				JOptionPane.showMessageDialog(null,"O jogo terminou!");
-			
-				} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, "O jogo terminou!");
+
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -81,14 +63,9 @@ public class Client {
 	}
 
 	private void connectToServer() throws IOException {		
-		System.out.println("Endereço = " + ip);
+		System.out.println("Endereco = " + ip);
 		socket = new Socket(ip, port);
 		System.out.println("Socket = " + socket);
-		
-		
-
 	}
-
-
 
 }

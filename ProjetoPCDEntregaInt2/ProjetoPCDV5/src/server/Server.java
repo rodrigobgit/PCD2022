@@ -3,13 +3,12 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import game.Game;
 
 public class Server {
 	public static final int PORTO = 8080;
 	private Game game;
-	private int newPlayerID=Game.NUM_BOT_PLAYERS;
+	private int newPlayerID=Game.NUM_BOT_PLAYERS-1;
 	
 	public void startServing() throws IOException {
 		System.out.println("Server started");
@@ -28,18 +27,20 @@ public class Server {
 			
 		}
 	}
+
 	public Game getGame() {
 		return game;
 	}
+
 	public synchronized int getNewPlayerID() {
 		newPlayerID++;
 		return newPlayerID;
 	}
+
 	public static void main(String[] args) {
 		try {
 			new Server().startServing();
 		} catch (IOException e) {
-			
 		}
 	}
 }

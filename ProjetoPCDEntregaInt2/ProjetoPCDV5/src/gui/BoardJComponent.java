@@ -27,7 +27,6 @@ import javax.swing.JComponent;
  */
 public class BoardJComponent extends JComponent implements KeyListener {
 	private Game game;
-
 	private Image obstacleImage = new ImageIcon("obstacle.png").getImage();
 	private Image humanPlayerImage= new ImageIcon("abstract-user-flat.png").getImage();
 	private Direction lastPressedDirection=null;
@@ -107,7 +106,6 @@ public class BoardJComponent extends JComponent implements KeyListener {
 			break;
 		}
 	}
-
 
 	@Override
 	public void keyReleased(KeyEvent e) {

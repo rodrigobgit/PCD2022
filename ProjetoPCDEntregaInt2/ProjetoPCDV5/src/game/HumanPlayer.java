@@ -6,6 +6,7 @@ public class HumanPlayer extends Player {
 	private Direction nextDirection;
 	private int move;
 	private long interval=Game.REFRESH_INTERVAL;
+
 	public HumanPlayer(Game game, int id, byte originalStrength) {
 		super(game, id, originalStrength);
 	}
@@ -18,7 +19,8 @@ public class HumanPlayer extends Player {
 		}
 
 		try {
-			Thread.sleep(Game.INITIAL_WAITING_TIME);
+			while(!game.isStarted())
+				Thread.sleep(200);
 		} catch (InterruptedException e) {
 			return;
 		}
@@ -40,9 +42,11 @@ public class HumanPlayer extends Player {
 		this.nextDirection=direction;
 		setMove(1);
 	}
+
 	public void setMove(int move) {
 		this.move = move;
 	}
+
 	public int getMove() {
 		return move;
 	}
@@ -50,4 +54,5 @@ public class HumanPlayer extends Player {
 	public boolean isHumanPlayer() {
 		return true;
 	}
+
 }

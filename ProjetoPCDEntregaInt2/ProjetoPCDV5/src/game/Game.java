@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.Observable;
 import environment.Cell;
 import environment.Coordinate;
-/* import gui.GameGuiMain; */
 import environment.TwoSecondsWait;
 
 public class Game extends Observable { // Game é o objecto Observado
 	public static final int DIMY = 30;
 	public static final int DIMX = 30;
-	public static final int NUM_BOT_PLAYERS = 50;
-	public static final int NUM_FINISHED_PLAYERS_TO_END_GAME=3;
+	public static final int NUM_BOT_PLAYERS = 90;
+	public static final int NUM_FINISHED_PLAYERS_TO_END_GAME=5;
 	public static final long REFRESH_INTERVAL = 100;
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
@@ -19,6 +18,7 @@ public class Game extends Observable { // Game é o objecto Observado
 	private LaunchWinnersCount lwc; // LaunchWinnersCount é a thread que lanca um CounterDownLatch
 	private WinnersCount wc; // WinnersCount é o CounterDownLatch
 	private boolean endOfGame = false;
+	private boolean isStarted;
 
 	public Cell[][] board;
 	private ArrayList<Player> arrayPlayerThreads; // ArrayList para as Threads de Jogador
@@ -59,19 +59,21 @@ public class Game extends Observable { // Game é o objecto Observado
 //			System.out.println("Jogador " + botPlayer.getIdentification() + " ficou com a Thread " + botPlayer.getId());
 			botPlayer.start();
 		}
-
 	}
 	
 	public Cell getRandomCell() {
 		Cell newCell=getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
 		return newCell; 
 	}
+
 	public Cell[][] getBoard() {
 		return board;
 	}
+
 	public void setBoard(Cell[][] board) {
 		this.board = board;
 	}
+
 	public Cell getCell(Coordinate at) {
 		return board[at.x][at.y];
 	}
@@ -117,6 +119,7 @@ public class Game extends Observable { // Game é o objecto Observado
 			pl.interrupt();
 //			System.out.println("Thread " + pl.getId() + " foi interrompida e é do jogador " + pl.getIdentification());
 		}
+
 		// Retirar no fim (ciclo join() não é necessário)
 		for (Player pl : arrayPlayerThreads) {
 			if (pl.isAlive()) {
@@ -128,12 +131,6 @@ public class Game extends Observable { // Game é o objecto Observado
 				}
 			}
 		}
-
-		
-/*		for (Player pl : arrayPlayerThreads) {
-			System.out.println("Thread " + pl.getId() + " está alive? " + pl.isAlive());
-		}*/
-		
 		System.out.println("Game Over!");
 	}
 
@@ -142,7 +139,17 @@ public class Game extends Observable { // Game é o objecto Observado
 		arrayTwoSecondsThreads.add(tsw);
 		tsw.start();
 	}
+
 	public boolean isEndOfGame() {
 		return endOfGame;
 	}
+
+	public boolean isStarted() {
+		return isStarted;
+	}
+
+	public void setStarted(boolean isStarted) {
+		this.isStarted = isStarted;
+	}
+
 }

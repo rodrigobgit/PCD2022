@@ -82,8 +82,8 @@ public class Cell {
 			if (this.getPlayer().isActive()) {
 				movingPlayer.duel(this.getPlayer()); // getPlayer traz jogador que ocupa a célula que movingPlayer quer
 			} else { // Célula ocupada por jogador não vivo
-				if(!movingPlayer.isHumanPlayer())
-				game.goThreadTwoSeconds(movingPlayer);
+				if(!movingPlayer.isHumanPlayer()) {
+					game.goThreadTwoSeconds(movingPlayer);
 				try {
 					wait();
 				} catch (InterruptedException e) {
@@ -93,6 +93,7 @@ public class Cell {
 						return;
 					}
 				}
+			}
 			}
 		} else { // nextCell está livre
 			currentCell.clear();

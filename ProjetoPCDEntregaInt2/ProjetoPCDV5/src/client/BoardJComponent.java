@@ -1,7 +1,5 @@
 package client;
 
-
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -11,10 +9,8 @@ import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-
 
 import utils.*;
 
@@ -43,53 +39,48 @@ public class BoardJComponent extends JComponent implements KeyListener {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		double cellHeight=getHeight()/(double)Game.DIMY;
-		double cellWidth=getWidth()/(double)Game.DIMX;
+		double cellHeight = getHeight() / (double) Game.DIMY;
+		double cellWidth = getWidth() / (double) Game.DIMX;
 
 		for (int y = 1; y < Game.DIMY; y++) {
-			g.drawLine(0, (int)(y * cellHeight), getWidth(), (int)(y* cellHeight));
+			g.drawLine(0, (int) (y * cellHeight), getWidth(), (int) (y * cellHeight));
 		}
 		for (int x = 1; x < Game.DIMX; x++) {
-			g.drawLine( (int)(x * cellWidth),0, (int)(x* cellWidth), getHeight());
-		}		
-			
-				Message msg=game.getMsg();
-				if(msg!=null) {
-				ArrayList<Data> data=msg.getInfo();
-				for ( Data dt: data) {					
-					if(dt.getStrength()==0) {
-						g.setColor(Color.YELLOW);
-						g.fillRect((int)(dt.getxPos()* cellWidth), 
-								(int)(dt.getyPos() * cellHeight),
-								(int)(cellWidth),(int)(cellHeight));
-						g.drawImage(obstacleImage, (int)(dt.getxPos() * cellWidth), (int)(dt.getyPos()*cellHeight), 
-								(int)(cellWidth),(int)(cellHeight), null);
-						// if player is dead, don'd draw anything else?
-						continue;
-					}
-					// Fill green if it is a human player
-					if(dt.isHuman()) {
-						g.setColor(Color.GREEN);
-						g.fillRect((int)(dt.getxPos()* cellWidth), 
-								(int)(dt.getyPos() * cellHeight),
-								(int)(cellWidth),(int)(cellHeight));
-						// Custom icon?
-						g.drawImage(humanPlayerImage, (int)(dt.getxPos() * cellWidth), (int)(dt.getyPos()*cellHeight), 
-								(int)(cellWidth),(int)(cellHeight), null);
-					}
-					g.setColor(new Color(50 * 1000));
-					((Graphics2D) g).setStroke(new BasicStroke(5));
-					Font font = g.getFont().deriveFont( (float)cellHeight);
-					g.setFont( font );
-					String strengthMarking=(dt.getStrength()==10?"X":""+dt.getStrength());
-					g.drawString(strengthMarking,
-							(int) ((dt.getxPos() + .2) * cellWidth),
-							(int) ((dt.getyPos() + .9) * cellHeight));
-				}
+			g.drawLine((int) (x * cellWidth), 0, (int) (x * cellWidth), getHeight());
+		}
 
+		Message msg = game.getMsg();
+		if (msg != null) {
+			ArrayList<Data> data = msg.getInfo();
+			for (Data dt : data) {
+				if (dt.getStrength() == 0) {
+					g.setColor(Color.YELLOW);
+					g.fillRect((int) (dt.getxPos() * cellWidth), (int) (dt.getyPos() * cellHeight), (int) (cellWidth),
+							(int) (cellHeight));
+					g.drawImage(obstacleImage, (int) (dt.getxPos() * cellWidth), (int) (dt.getyPos() * cellHeight),
+							(int) (cellWidth), (int) (cellHeight), null);
+					// if player is dead, don'd draw anything else?
+					continue;
+				}
+				// Fill green if it is a human player
+				if (dt.isHuman()) {
+					g.setColor(Color.GREEN);
+					g.fillRect((int) (dt.getxPos() * cellWidth), (int) (dt.getyPos() * cellHeight), (int) (cellWidth),
+							(int) (cellHeight));
+					// Custom icon?
+					g.drawImage(humanPlayerImage, (int) (dt.getxPos() * cellWidth), (int) (dt.getyPos() * cellHeight),
+							(int) (cellWidth), (int) (cellHeight), null);
+				}
+				g.setColor(new Color(0, 0, 0));
+				((Graphics2D) g).setStroke(new BasicStroke(5));
+				Font font = g.getFont().deriveFont((float) cellHeight);
+				g.setFont(font);
+				String strengthMarking = (dt.getStrength() == 10 ? "X" : "" + dt.getStrength());
+				g.drawString(strengthMarking, (int) ((dt.getxPos() + .2) * cellWidth),
+						(int) ((dt.getyPos() + .9) * cellHeight));
 			}
-	}
-	
+		}
+	}	
 
 	@Override
 	public void keyPressed(KeyEvent e) {
