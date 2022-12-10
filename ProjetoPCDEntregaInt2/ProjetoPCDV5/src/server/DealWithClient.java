@@ -1,8 +1,11 @@
 package server;
 
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+
+import javax.xml.stream.events.EndDocument;
 
 import environment.Cell;
 import environment.Coordinate;
@@ -17,7 +20,7 @@ public class DealWithClient extends Thread {
 	private BufferedReader  in;
 	private ObjectOutputStream out;
 	private Server server;
-	Message msg;
+	private Message msg;
 	
 
 	public DealWithClient(Socket socket,Server server) {
@@ -54,24 +57,40 @@ public class DealWithClient extends Thread {
 		
 		int playerID=server.getNewPlayerID();		
 		HumanPlayer player=new HumanPlayer(game, playerID, (byte) 5);
-		player.start();		
-		
-		
-		
-		
-		
-		
+		player.start();	
 		//manda atualizacao do estado do jogo ciclicamente
-		while (true) {
+		while (!game.isEndOfGame()) {
 			sleep(Game.REFRESH_INTERVAL);
-			refreshData(game);
-			//fazer o out.write			
-			out.writeObject(msg);
-			//out.close();
-			
-			
-		}
+			refreshData(game);					
+			out.writeObject(msg);			
+			String key=in.readLine();
+			if(key!=null) {
+			switch(key){
+			case "LEFT" :
+				player.setNextDirection(environment.Direction.LEFT);				
+				break;
+			case "UP" :
+				player.setNextDirection(environment.Direction.UP);
+				break;
+			case "DOWN" :
+				player.setNextDirection(environment.Direction.DOWN);
+				break;
+			case "RIGHT" :
+				player.setNextDirection(environment.Direction.RIGHT);
+				break;
+			}
+			}
+		}		
+		endComs();
 	}
+	public void endComs() throws IOException {
+		msg=new Message(null, 1);
+		out.writeObject(msg);
+		out.close();
+		in.close();
+		
+	}
+
 	public void refreshData(Game game) {
 		ArrayList<Data> info = new ArrayList<>(); 
 		msg=new Message(info,0);

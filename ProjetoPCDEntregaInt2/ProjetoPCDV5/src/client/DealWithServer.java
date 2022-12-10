@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.*;
 import utils.Message;
@@ -12,7 +13,8 @@ public class DealWithServer extends Thread{
 	private PrintWriter out;
 	private Socket socket;	
 	private GameGuiMain gui;
-	private boolean isReceiving=false;
+	private boolean isGameOver=false;
+	
 	public DealWithServer(Socket socket) {
 		super();
 		this.socket=socket;
@@ -39,32 +41,33 @@ public class DealWithServer extends Thread{
 		game=new Game();		
 		gui=new GameGuiMain(game);		
 		gui.init();
-//		game.notifyChange();
-//		isReceiving=true;
+		KeyEvent e = new KeyEvent(gui.getBoardGui(), 1, 20, 1, 10, 'a');
 		while(!isGameOver()){
 			Message msg=(Message)in.readObject();
-			game.setMsg(msg);
-			game.notifyChange();
+			if(msg.isOver==0) {
+				game.setMsg(msg);
+				game.notifyChange();			
+				gui.getBoardGui().keyPressed(e);	
+				out.println(gui.getBoardGui().getLastPressedDirection());
+				gui.getBoardGui().clearLastPressedDirection();
+			}
+			else {
+				isGameOver=true;
+				in.close();
+				out.close();
+				
+			}
+				
+				
+			}
 			
-		}
-		
-		
-		
-		
-		
-		
-		
-
-		
-		
-		
-		
-		
+			
+			
 	}
+		
+		
 	
-	public boolean isReceiving() {
-		return isReceiving;
-	}
+	
 	
 	
 	private void doConnections(Socket socket) throws IOException {
@@ -74,6 +77,6 @@ public class DealWithServer extends Thread{
 	}
 	
 	public boolean isGameOver() {
-		return false;
+		return isGameOver;
 	}
 }

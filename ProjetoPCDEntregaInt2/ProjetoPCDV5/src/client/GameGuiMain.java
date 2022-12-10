@@ -33,11 +33,15 @@ public class GameGuiMain implements Observer { // GameGuiMain contém instância
 	public void init() {
 		frame.setVisible(true);
 		
+		
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		boardGui.repaint();
+	}
+	public BoardJComponent getBoardGui() {
+		return boardGui;
 	}
 
 	

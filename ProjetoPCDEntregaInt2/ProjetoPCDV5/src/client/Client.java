@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import javax.net.ssl.SSLException;
+import javax.swing.JOptionPane;
 
 
 
@@ -34,8 +35,11 @@ public class Client {
 		InetAddress serverip=InetAddress.getByName(args[0]);
 		int serverport=Integer.parseInt(args[1]);
 		boolean choice=true;
-		if(args[2].equals("arrows"))choice=true;
-		if(args[2].equals("letters"))choice=false;
+		int which=JOptionPane.showConfirmDialog(null, "Choose Yes to play with arrow keys or No for WSAD keys");
+		if(which==0)choice=true;
+		else choice=false;
+		
+
 		
 		
 		Client client=new Client(serverip,serverport,choice);
@@ -52,14 +56,24 @@ public class Client {
 			
 			//para manter a ligação aberta por agora
 			while(!dws.isGameOver()) {
+				try {
+					Thread.sleep(2000);
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 			}
-				
 			
-		} finally {				
+			
+		} finally {	
+			
 			try {
 				socket.close();
-			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null,"O jogo terminou!");
+			
+				} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
