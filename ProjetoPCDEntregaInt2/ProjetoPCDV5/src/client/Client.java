@@ -1,15 +1,11 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import javax.swing.JOptionPane;
 
 public class Client {
-	private BufferedReader in;
-	private PrintWriter out;
 	private Socket socket;
 	private InetAddress ip;
 	private int port;
@@ -39,13 +35,12 @@ public class Client {
 			DealWithServer dws = new DealWithServer(socket);
 			dws.start();
 
-			// para manter a liga��o aberta por agora
+			// para manter a ligacao aberta
 			while (!dws.isGameOver()) {
 				try {
 					Thread.sleep(2000);
 
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -56,7 +51,6 @@ public class Client {
 				JOptionPane.showMessageDialog(null, "O jogo terminou!");
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
